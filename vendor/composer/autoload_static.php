@@ -53,6 +53,7 @@ class ComposerStaticInitb1d700c4614c24013a24f9dbb524ef72
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
             'PHPStan\\PhpDocParser\\' => 21,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'I' => 
         array (
@@ -76,8 +77,8 @@ class ComposerStaticInitb1d700c4614c24013a24f9dbb524ef72
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
         'Webmozart\\Assert\\' => 
         array (
@@ -149,8 +150,8 @@ class ComposerStaticInitb1d700c4614c24013a24f9dbb524ef72
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -167,6 +168,10 @@ class ComposerStaticInitb1d700c4614c24013a24f9dbb524ef72
         'PHPStan\\PhpDocParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'Infobip\\' => 
         array (

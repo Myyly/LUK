@@ -15,8 +15,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quên mật khẩu | Không thể đăng nhập - Lux</title>
-    <link rel="icon" href="/images/LuxLogo.png" type="image/png"> 
-    <link rel="stylesheet" href="/CSS/variables.css">
+    <link rel="icon" href="/assets/images/LuxLogo.png" type="image/png"> 
+    <link rel="stylesheet" href="/assets/CSS/variables.css">
 </head>
 <body>
 <div class="header">

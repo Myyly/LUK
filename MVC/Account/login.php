@@ -1,19 +1,35 @@
+<?php
+
+?>
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lux - Đăng nhập hoặc đăng ký</title>
-    <link rel="icon" href="/images/LuxLogo.png" type="image/png"> 
+    <link rel="icon" href="/assets/images/LuxLogo.png" type="image/png"> 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-GmPkdT/zrYr4b6o/nBHSY7n8r8S0w/tH2Gkq5CZL/0lE/0hQg4RlDm8cg09wxglg" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-Cueo4u5zQxWx2e6r7SmM1dXMBMbRkPFDLZSyD+fl/zMXsPTxtMheRP8dGKe5zC4x" crossorigin="anonymous">
-    <link rel="stylesheet" href="/CSS/variables.css">
-    <link rel="stylesheet" href="/CSS/account.css">
+    <link rel="stylesheet" href="/assets/CSS/variables.css">
+    <link rel="stylesheet" href="/assets/CSS/account.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body>
     <div class="lux-header text-center py-3">
         LUX
@@ -24,15 +40,16 @@
             <input type="password" name="password" placeholder="Password" required class="form-control mb-3">
             <button type="submit" class="login-btn btn btn-primary btn-block">Đăng nhập</button>
         </form>
-        <a href="#" class="forgot-password d-block text-center my-2">
+        <a href="/MVC/Account/FogotPassword.php" class="forgot-password d-block text-center my-2">
             <strong> Quên mật khẩu? </strong>
         </a>
         <div class="divider my-3"></div>
-    <!-- ///////////////////////////////////////////                           CREATE NEW ACCOUNT                /////////////////////////////////////////// //////////////////////////////////////// -->
-        <button class="create-btn btn btn-secondary btn-block" data-toggle="modal" data-target="#registerModal">Tạo tài khoản mới</button>
-                <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
 
+
+        <!-- ///////////////////////////////////////////                           CREATE NEW ACCOUNT                /////////////////////////////////////////// //////////////////////////////////////// -->
+        <button class="create-btn btn btn-secondary btn-block" data-toggle="modal" data-target="#registerModal">Tạo tài khoản mới</button>
+        <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title" id="registerModalLabel">Đăng ký tài khoản</h4>
@@ -102,7 +119,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="contact">Số điện thoại hoặc Email:</label>
-                                <input type="email" class="form-control <?php echo isset($errors['contact']) ? 'is-invalid' : ''; ?>" id="contact" name="contact" value="<?php echo isset($form_data['contact']) ? htmlspecialchars($form_data['contact']) : ''; ?>" required>
+                                <input type="text" class="form-control <?php echo isset($errors['contact']) ? 'is-invalid' : ''; ?>" id="contact" name="contact" value="<?php echo isset($form_data['contact']) ? htmlspecialchars($form_data['contact']) : ''; ?>" required>
                                 <?php if (isset($errors['contact'])): ?>
                                     <div class="invalid-feedback">
                                         <?php echo $errors['contact']; ?>
@@ -113,6 +130,7 @@
                                     </div>
                                 <?php endif; ?>
                             </div>
+
                             <div class="form-group">
                                 <label for="password">Mật khẩu:</label>
                                 <input type="password" class="form-control <?php echo isset($errors['password']) ? 'is-invalid' : ''; ?>" id="password" name="password" minlength="6" required>
@@ -144,9 +162,9 @@
                             <button type="submit" class="btn btn-primary" name="registerAccount">Đăng ký</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                         </div>
-                        <a href="#" class="forgot-password d-block text-center my-2">
-    <strong>Bạn đã có tài khoản?</strong>
-</a>
+                        <a href="/Users/login.php" class="forgot-password d-block text-center my-2">
+                            <strong>Bạn đã có tài khoản?</strong>
+                        </a>
                     </form>
                 </div>
             </div>
@@ -156,32 +174,33 @@
         <p><a href="#">Tạo trang</a> dành cho người nổi tiếng, thương hiệu hoặc doanh nghiệp.</p>
     </div>
     <?php if (!empty($errors)): ?>
-    <script>
-        $(document).ready(function(){
-            $('#registerModal').modal('show');
-        });
-    </script>
+        <script>
+            $(document).ready(function() {
+                $('#registerModal').modal('show');
+            });
+        </script>
     <?php endif; ?>
     <script>
-    (function() {
-        'use strict';
-        window.addEventListener('load', function() {
-            // Lấy tất cả các form cần xác thực
-            var forms = document.getElementsByClassName('needs-validation');
-            // Duyệt qua các form và ngăn chặn gửi nếu không hợp lệ
-            Array.prototype.filter.call(forms, function(form) {
-                form.addEventListener('submit', function(event) {
-                    // Kiểm tra form hợp lệ
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    // Thêm lớp was-validated để hiển thị trạng thái xác thực
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
-    })();
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                // Lấy tất cả các form cần xác thực
+                var forms = document.getElementsByClassName('needs-validation');
+                // Duyệt qua các form và ngăn chặn gửi nếu không hợp lệ
+                Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        // Kiểm tra form hợp lệ
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        // Thêm lớp was-validated để hiển thị trạng thái xác thực
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
     </script>
 </body>
+
 </html>
