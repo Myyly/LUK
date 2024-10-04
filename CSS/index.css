@@ -1,0 +1,248 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+}
+
+/* Sidebar styling */
+.sidebar {
+    width: 250px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 100vh;
+    position: fixed; /* Fixed position like Facebook's sidebar */
+}
+
+.sidebar ul {
+    list-style-type: none;
+}
+
+.sidebar ul li {
+    padding: 15px 0;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.sidebar ul li:hover {
+    background-color: #f0f2f5; /* Hover effect */
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #050505;
+    font-weight: 800;
+    margin-left: 10px; /* Space between icon and text */
+    font-size: 14px;
+}
+
+.sidebar ul li i {
+    font-size: 18px;
+}
+
+/* Main content */
+.main-content {
+    margin-left: 270px;
+    padding: 20px;
+}
+
+/* .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0; 
+    z-index: 100;
+}
+
+.header input[type="text"] {
+    width: 60%;
+    padding: 8px 20px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #f0f2f5;
+} */
+
+.user-info a {
+    color: #1877f2;
+    font-weight: bold;
+}
+
+.stories {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto; /* Scroll horizontally for stories */
+    margin-bottom: 20px;
+}
+
+.story {
+    width: 100px;
+    height: 120px;
+    background-color: #ddd;
+    border-radius: 10px;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* Prevent shrinking when scrolled */
+}
+
+.posts {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.post img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.post h3 {
+    margin-bottom: 10px;
+}
+
+.nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Add some space between icons */
+}
+
+.nav-icons .icon {
+    font-size: 22px; 
+    color: #606770;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.nav-icons .icon:hover {
+    background-color: #e4e6eb;
+    border-radius: 50%;
+    color: #1877f2;
+    padding: 10px;
+}
+
+.nav-icons .avatar {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+}
+
+.nav-icons .avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.nav-icons .avatar span {
+    font-size: 16px;
+    color: #333;
+}
+.sidebar ul li a i {
+    font-size: 23px;
+    margin-right: 10px; 
+}
+
+.sidebar ul li a:hover i {
+    color: #fa3131; 
+}
+/* .header .search {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.header .search input[type="text"] {
+    width: 350px;
+    padding: 10px 40px 10px 20px;
+    font-size: 16px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    outline: none;
+    background-color: #f0f2f5;
+}
+
+.header .search i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #606770;
+}
+.header a img {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+}
+.nav-icons .icon i {
+    font-size: 23px;
+    color: #606770; 
+}
+
+.nav-icons .icon:hover i {
+    color: #fa3131; 
+}
+
+
+.avatar {
+    position: relative; 
+}
+
+.avatar img {
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none; 
+    position: absolute;
+    top: 50px; 
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 200px;
+    z-index: 1;
+}
+
+.dropdown-menu ul {
+    list-style-type: none;
+    padding: 10px;
+    margin: 0;
+}
+
+.dropdown-menu ul li {
+    padding: 10px 0;
+}
+
+.dropdown-menu ul li a {
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-menu ul li a i {
+    margin-right: 10px;
+}
+
+.dropdown-menu ul li:hover {
+    background-color: #f0f2f5;
+    border-radius: 8px;
+} */

@@ -1,0 +1,40 @@
+/* Define color variables inside :root */
+:root {
+    --primary-color: #d63636; /* Example blue for links and buttons */
+    --secondary-color:#47a81d;; /* Example red for hover effects */
+    --background-color: #f0f2f5; /* Light background color */
+    --text-color: #333333; /* Dark text color */
+    --link-hover-color: #ff8686; /* Hover color for links */
+    --sidebar-bg-color: #ffffff; /* Sidebar background */
+    --shadow-color: rgba(0, 0, 0, 0.1); /* Shadow effect color */
+    --nav-icons-hover-background :#e4e6eb;
+    --black : #070707;
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color); /* Reusing background color */
+    color: var(--text-color); /* Reusing text color */
+}
+
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg-color); /* Reusing sidebar background color */
+    box-shadow: 2px 0 5px var(--shadow-color); /* Reusing shadow color */
+}
+
+.header {
+    background-color: var(--sidebar-bg-color); /* Reusing background color for header */
+    box-shadow: 0 2px 5px var(--shadow-color); /* Reusing shadow */
+}
+
+.sidebar ul li a {
+    color: var(--text-color); /* Reusing text color */
+}
+
+.sidebar ul li a:hover {
+    color: var(--link-hover-color); /* Using hover color for links */
+}
+
+.nav-icons .icon:hover {
+    color: var(--secondary-color); /* Using secondary color for icon hover */
+}
