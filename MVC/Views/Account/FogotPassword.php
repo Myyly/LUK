@@ -1,14 +1,20 @@
 <?php
-    $errorMessage = "";
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (empty($_POST["email"])) {
-            $errorMessage = "<strong>Vui lòng điền vào trường dữ liệu</strong><br>Điền vào trường dữ liệu bên dưới để thực hiện tìm kiếm tài khoản của bạn!";
-        } else {
-            // Xử lý khi có email (nếu cần)
-            // $email = $_POST["email"];
-        }
+$errorMessage = "";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (empty($_POST["email"])) {
+        $errorMessage = "<strong>Vui lòng điền vào trường dữ liệu</strong><br>Điền vào trường dữ liệu bên dưới để thực hiện tìm kiếm tài khoản của bạn!";
+    } else {
+        // Xử lý khi có email (nếu cần)
+        // $email = $_POST["email"];
     }
+
+    if (isset($_POST['btnCancel'])) {
+        header("Location: login.php"); // Chuyển hướng tới trang đăng nhập
+        exit();
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -44,7 +50,7 @@
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <input type="text" id="email-input" name="email" placeholder="Email hoặc số di động">
                 <div class="buttons">
-                    <button type="button" class="cancel-btn">Hủy</button>
+                    <button type="submit" class="cancel-btn" name ="btnCancel">Hủy</button>
                     <button type="submit" class="search-btn">Tìm kiếm</button>
                 </div>
             </form>

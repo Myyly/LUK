@@ -38,3 +38,12 @@ body {
 .nav-icons .icon:hover {
     color: var(--secondary-color); /* Using secondary color for icon hover */
 }
+.error-message {
+    background-color: #FBCCDA;
+    color: #000000;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #FA3;
+    border-radius: 4px;
+    font-size: 14px;
+}

@@ -28,7 +28,6 @@ function sendmail($email) {
 
     return $mail->send(); // Trả về true hoặc false
 }
-
 if (isset($_POST["Signup"])) {
     $email = $_POST["email"];
     

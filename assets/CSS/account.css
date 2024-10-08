@@ -27,7 +27,7 @@ body {
     padding: 40px 30px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    width: 350px;
+    width: 500px;
     margin-top: -100px;
 }
 
@@ -119,4 +119,13 @@ body {
 
 .footer a:hover {
     text-decoration: underline;
+}
+.success-msg {
+    background-color: hwb(102 70% 0%);
+    color: #007904;
+    padding: 1em 1em;
+    border-radius: 5px;
+    margin:0 0 1.5em;
+    text-align: center;
+    font-size: 14px;
 }
