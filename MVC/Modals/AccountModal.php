@@ -1,6 +1,6 @@
 <?php 
 
-class AccoountModal{
+class AccountModal{
     public $user_id;
     public $email;
     public $phone_number;

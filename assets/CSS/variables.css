@@ -1,10 +1,10 @@
 /* Define color variables inside :root */
 :root {
-    --primary-color: #d63636; /* Example blue for links and buttons */
+    --primary-color: #f33c3c; /* Example blue for links and buttons */
     --secondary-color:#47a81d;; /* Example red for hover effects */
     --background-color: #f0f2f5; /* Light background color */
     --text-color: #333333; /* Dark text color */
-    --link-hover-color: #ff8686; /* Hover color for links */
+    --link-hover-color: #d43f3f; /* Hover color for links */
     --sidebar-bg-color: #ffffff; /* Sidebar background */
     --shadow-color: rgba(0, 0, 0, 0.1); /* Shadow effect color */
     --nav-icons-hover-background :#e4e6eb;

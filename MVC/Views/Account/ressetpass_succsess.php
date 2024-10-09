@@ -107,8 +107,8 @@
         </div>
     </div>
     <div class="container">
-        <h3>Đăng Ký Thành Công</h3>
-        <p>Cảm ơn bạn đã đăng ký! Bạn có thể đăng nhập vào tài khoản của mình ngay bây giờ.</p>
+        <h3>Tạo mật khẩu mới thành công</h3>
+        <p> Bạn có thể đăng nhập vào tài khoản với mật khẩu mới vừa tạo</p>
         <button onclick="window.location.href='login.php'">Đăng Nhập</button>
         <div class="timer">
             Bạn sẽ được chuyển hướng tới trang đăng nhập trong <span id="countdown">5</span> giây...

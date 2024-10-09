@@ -11,7 +11,6 @@ $accountService = new AccountService();
 $passwordError = "";
 $email_err = ""; 
 $confirmPasswordError = ""; 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['registerAccount'])) {
         $pass = $_POST['password'];
@@ -123,15 +122,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             opacity: 0.9;
             background-color: var(--link-hover-color);
         }
-
-        /* Container cho các trường nhập */
         .form-container {
-            border: 1px solid #ddd; /* Đường viền cho container */
-            border-radius: 8px; /* Bo góc */
-            padding: 20px; /* Padding bên trong */
-            margin: auto; /* Căn giữa */
-            max-width: 600px; /* Đặt chiều rộng tối đa cho container */
-            background-color: #f9f9f9; /* Màu nền nhẹ */
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            padding: 20px; 
+            margin: auto; 
+            max-width: 600px; 
+            background-color: #f9f9f9; 
         }
     </style>
 </head>

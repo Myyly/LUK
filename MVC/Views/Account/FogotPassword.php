@@ -1,17 +1,90 @@
 <?php
+session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+require_once '../../Controllers/Account.php';
+require_once '../../Views/Account/AccountServices.php';
+$accountController=new AccountController();
+$accountService = new AccountService();
+
 $errorMessage = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (empty($_POST["email"])) {
-        $errorMessage = "<strong>Vui lòng điền vào trường dữ liệu</strong><br>Điền vào trường dữ liệu bên dưới để thực hiện tìm kiếm tài khoản của bạn!";
-    } else {
-        // Xử lý khi có email (nếu cần)
-        // $email = $_POST["email"];
-    }
+        if(isset($_POST['btnSearch'])){
+            if($_POST["email"]==null){
+                $errorMessage = "<strong>Vui lòng điền vào trường dữ liệu</strong><br>Điền vào trường dữ liệu bên dưới để thực hiện tìm kiếm tài khoản của bạn!";
+            }else {
+                $contact = $_POST['email'];
+                $user = null;
+                if($contact == null  ){
+                    $errorMessage = "<strong>Không tìm thấy tài khoản</strong><br> $contact không kết nối với tài khoản nào,Vui lòng kiểm tra lại!";
+                }else{
+                if (filter_var($contact, FILTER_VALIDATE_EMAIL)) {
+                    $user = $accountController->LoginByEmail($contact); 
+                }
+                elseif (preg_match('/^[0-9]{10,15}$/', $contact)) {
+                    $user = $accountController->LoginByPhoneNumber($contact); 
+                } else {
+                    $errorMessage = "<strong>Không tìm thấy tài khoản</strong><br> $contact không kết nối với tài khoản nào,Vui lòng kiểm tra lại!";
+                   
+                }
+                if ($user != null) {
+                    if (($user->getEmail() == $contact)) {
+                        $accountService->sendmail($user->getEmail());
+                        $_SESSION['resetpassword'] = true; 
+                        $_SESSION['email'] = $user->getEmail();
+                        header("Location: confirm_email.php"); 
+                        exit();
+                    } else if (($user->getPhone_numberl() == $contact)) {
 
-    if (isset($_POST['btnCancel'])) {
+                        header("Location: confirm_phone.php"); 
+                        exit();
+                    }
+                } else {
+                    $errorMessage = "<strong>Không tìm thấy tài khoản</strong><br> $contact không kết nối với tài khoản nào,Vui lòng kiểm tra lại!";
+                }
+            }
+            }
+        }
+        if (isset($_POST['btnCancel'])) {
         header("Location: login.php"); // Chuyển hướng tới trang đăng nhập
         exit();
     }
+
+        if(isset($_POST['btnLogin'])){
+        $contact = $_POST['contact'];
+        $pass = $_POST['password'];
+        if($contact == null && $pass == null){
+            $_SESSION['err'] = "Email hoặc số di động bạn nhập không kết nối với tài khoản nào.";
+            header("Location: login.php"); 
+            exit();
+        }else{
+        if (filter_var($contact, FILTER_VALIDATE_EMAIL)) {
+            $user = $accountController->LoginByEmail($contact); 
+        }
+        elseif (preg_match('/^[0-9]{10,15}$/', $contact)) {
+            $user = $accountController->LoginByPhoneNumber($contact); 
+        } else {
+            $errorMessage = "Dữ liệu không hợp lệ. Vui lòng nhập email hoặc số điện thoại.";
+            exit();
+        }
+        if ($user != null) {
+            if (($user->getEmail() == $contact || $user->getPhone_numberl() == $contact) && password_verify($pass, $user->getPassword_hash())) {
+                header("Location: profile.php"); 
+                exit();
+            } else {
+                $_SESSION['err']= " Mật khẩu không đúng.";
+                header("Location: login.php"); 
+                exit();
+            }
+        } else {
+            $_SESSION['err']= "Email hoặc số di động bạn nhập không kết nối với tài khoản nào.";
+            header("Location: login.php"); 
+                exit();
+        }
+    }
+    }
+    
 }
 ?>
 
@@ -29,11 +102,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="logo">
             <h1>LUX</h1>
         </div>
+        <form action="" method ="POST">
         <div class="login-form">
-            <input type="text" placeholder="Email hoặc điện thoại">
-            <input type="password" placeholder="Mật khẩu">
-            <button class="login-btn">Đăng nhập</button>
+            <input type="text" placeholder="Email hoặc điện thoại" name ="contact">
+            <input type="password" placeholder="Mật khẩu" name = "password">
+            <button type= "submit" class="login-btn" name="btnLogin">Đăng nhập</button>
         </div>
+        </form>
     </div>
 
     <div class="container">
@@ -51,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="text" id="email-input" name="email" placeholder="Email hoặc số di động">
                 <div class="buttons">
                     <button type="submit" class="cancel-btn" name ="btnCancel">Hủy</button>
-                    <button type="submit" class="search-btn">Tìm kiếm</button>
+                    <button type="submit" class="search-btn" name ="btnSearch">Tìm kiếm</button>
                 </div>
             </form>
         </div>
@@ -60,69 +135,74 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 </html>
 <style>
-    * {
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
 body {
     font-family: Arial, sans-serif;
     background-color: #f2f3f5;
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
 }
-
 .header {
     width: 100%;
     background-color: white;
-    padding: 15px 0;
+    padding: 15px 50px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 50px;
 }
 
+/* Logo Styling */
 .header .logo h1 {
-    color:  var(--primary-color);
+    color: var(--primary-color);
     font-size: 36px;
     font-weight: bold;
 }
 
-.header .login-form {
+/* Login Form Styling */
+.login-form {
     display: flex;
+    align-items: center;
     gap: 10px;
 }
 
-.header input {
-    padding: 10px;
+.login-form input {
+    padding: 8px 10px;
     border: 1px solid #dddfe2;
     border-radius: 4px;
     font-size: 14px;
+    min-width: 150px;
 }
 
 .login-btn {
     background-color: var(--primary-color);
     color: white;
     border: none;
-    padding: 10px 16px;
+    padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
 .login-btn:hover {
-    opacity: 0.9;
     background-color: var(--link-hover-color);
 }
 
+/* Container Styling */
 .container {
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     text-align: center;
     margin-top: 40px;
+    padding: 0 20px; /* Added padding for smaller screens */
 }
 
 .form-container {
@@ -145,7 +225,7 @@ body {
     margin-bottom: 20px;
 }
 
-form input {
+.form-container form input {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
@@ -157,6 +237,7 @@ form input {
 .buttons {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
 }
 
 .cancel-btn {
@@ -166,8 +247,8 @@ form input {
     font-size: 14px;
     border: none;
     border-radius: 4px;
-    margin-right: 8px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .search-btn {
@@ -178,12 +259,17 @@ form input {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.cancel-btn:hover, .search-btn:hover {
-    opacity: 0.9;
+.cancel-btn:hover {
+    background-color: #e4e6eb;
+}
+
+.search-btn:hover {
     background-color: var(--link-hover-color);
 }
+
 .error-message {
     background-color: #FBCCDA;
     color: #000000;
@@ -193,4 +279,47 @@ form input {
     border-radius: 4px;
     font-size: 14px;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header {
+        padding: 15px 20px;
+    }
+
+    .login-form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .login-form input {
+        min-width: 100%;
+    }
+
+    .login-btn {
+        width: 100%;
+    }
+
+    .container {
+        margin-top: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header .logo h1 {
+        font-size: 28px;
+    }
+
+    .login-form input {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    .login-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}
+
 </style>

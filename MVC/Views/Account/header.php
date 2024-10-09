@@ -1,7 +1,21 @@
+<?php
+//session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+require_once '../../Controllers/Account.php';
+$accountController = new AccountController();
+$idUser = $_SESSION['idUser'];
+$user = $accountController->findUserbyId($idUser);
+?>
+
+
+
+
 <link rel="stylesheet" href="/CSS/variables.css">
 <div class="header">
     <div class="logo">
-        <a href="#"><img src="/images/LuxLogo.png" alt="Logo"></a>
+        <a href="#"><img src="/assets/images/LuxLogo.png" alt="Logo"></a>
     </div>
     <div class="search">
         <input type="text" placeholder="Tìm kiếm trên Facebook">
@@ -14,20 +28,23 @@
         <a href="#" class="icon"><i class="fas fa-comment-alt"></i></a>
         <a href="#" class="icon"><i class="fas fa-bell"></i></a>
         <div class="avatar">
-            <img src="/images/LuxLogo.png" alt="User Avatar" onclick="toggleDropdown()">
+            <img src="/assets/images/LuxLogo.png" alt="User Avatar" onclick="toggleDropdown()">
             <div class="dropdown-menu">
+                <form action="" method="GET">
                 <ul>
-                    <li><a href="#"><i class="fas fa-user"></i> Profile</a></li>
-                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                    <li><a href="#"><i class="fas fa-question-circle"></i> Help</a></li>
-                    <li><a href="/Users/login.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
+                        <li>
+                            <a href="profile.php?id=<?php echo $idUser; ?>"><i class="fas fa-user"></i> Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                        <li><a href="#"><i class="fas fa-question-circle"></i> Help</a></li>
+                        <li><a href="login.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </form>
             </div>
         </div>
     </div>
 </div>
 <style>
-    /* header.css */
 
 /* Header container */
 .header {

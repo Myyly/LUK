@@ -1,7 +1,33 @@
 <?php 
 session_start();
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+require_once '../../Controllers/Account.php';
+$accountController = new AccountController();
+$errorMessage = "";
+$email = $_SESSION['email'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST["btnResetPassword"])) {
+        $newPass = $_POST['password'];
+        if (empty($newPass)) {
+            $errorMessage = "Vui lòng nhập mật khẩu mới để tiến hành tạo lại mật khẩu.";
+        } elseif (strlen( $_POST['password']< 6)) {
+            $errorMessage = "Mật khẩu phải có tối thiểu 6 ký tự.";
+        } elseif ($newPass != $_POST['confirm_password']) {
+            $errorMessage = "Xác nhận mật khẩu không chính xác. Vui lòng kiểm tra lại.";
+        } else {
+            $accountController->resetPassword($email,$newPass);
+            header("Location: ressetpass_succsess.php"); 
+            exit();
+        }
+    } elseif (isset($_POST["btnCancel"])) {
+        header("Location: login.php"); 
+        exit();
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,6 +96,15 @@ input[type="text"] {
     box-sizing: border-box;
     font-size: 16px; /* Kích thước văn bản trong input */
 }
+input[type="password"] {
+    width: 100%;
+    padding: 12px; /* Tăng kích thước padding */
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 16px; /* Kích thước văn bản trong input */
+}
 
 button {
     width: 100%;
@@ -105,22 +140,21 @@ button:hover {
         </div>
     </div>
     <div class="container">
-        <h3>Chúng tôi đã gửi mã của bạn đến <?php echo $_SESSION['email']; ?></h3>
-        <p>Vui lòng kiểm tra mã trong email của bạn.Mã này gồm 4 số.</p>
+        <h3>Tạo mật khẩu mới</h3>
+        <p>Tạo mật khẩu mới có tối thiểu 6 ký tự.Mật khẩu mạnh là mật khẩu được kết hợp từ các ký tự,số và dấu câu</p>
         <?php if (!empty($errorMessage)): ?>
                 <div class="error-message">
                     <?php echo $errorMessage; ?>
                 </div>
             <?php endif; ?>
-        <h3>Nhập mã gồm 4 chữ số</h3>
         <form method="post" action="">
-            <input type="text" name="verification_code" placeholder="L-XXXXXX">
-            <button type="submit" name="btnConfirm">Tiếp tục</button>
+            <input type="password" name="password" placeholder="Nhập mật khẩu mới" value="<?php echo isset($_POST['password']) ? htmlspecialchars($_POST['password']) : ''; ?>">
+            <input type="text"name="confirm_password" placeholder="Xác nhận mật khẩu mới">
+            <button type="submit" name = "btnResetPassword">Tiếp tục</button>
         </form>
         <div class="resend">
     <form action="" method="post">
-        <input type="hidden" name="resendEmail" value="true">
-        <button type="submit" class="btn btn-link" name = "btnResend">Gửi lại email</button>
+        <button type="submit" class="btn btn-link" name = "btnCancel">Huỷ</button>
     </form>
 </div>
     </div>

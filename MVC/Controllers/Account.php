@@ -15,5 +15,19 @@ class AccountController {
     public function checkEmailExist($email){
         return $this->account->checkEmailExist($email);
     }
+    public function LoginByEmail($email){
+        return $this->account->LoginByEmail($email);
+    }
+    public function LoginByPhoneNumber($email){
+        return $this->account->LoginByPhoneNumber($email);
+    }
+    public function resetPassword($email,$newpass){
+        return $this->account->resetPassword($email,$newpass);
+    }  
+    public function findUserbyId($id){
+        return $this->account->findUserbyId($id);
+    }
+
+
 }
 ?>

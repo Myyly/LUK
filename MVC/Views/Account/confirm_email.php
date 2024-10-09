@@ -7,26 +7,62 @@ $accountController = new AccountController();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['btnConfirm'])) {
       //  $code = $_SESSION['otp_code'] ?? null; 
-      $code = $_SESSION['otp_code']; 
-        if ($code == $_POST['verification_code']) {
-            $email = $_SESSION['email'];
-            $phone_number = $_SESSION[''];
-            $password_hash = password_hash($_SESSION['password'], PASSWORD_BCRYPT);
-            $full_name = $_SESSION['fullname'];
-            $date_of_birth =  $_SESSION['dayofbirth'];
-            $gender = $_SESSION['gender'];
-            $profile_picture_url = 'user_default.png';
-            $bio =" "; 
-            $status="active";
-            $accountController->SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status);
-            header("Location: signup_success.php"); 
-            exit();
-        } elseif (empty($_POST["verification_code"])) {
-            $errorMessage = "<strong>Vui lòng điền vào trường dữ liệu</strong><br>Điền vào trường dữ liệu bên dưới để thực hiện xác nhận Email của bạn!";
-        } elseif ($code != $_POST['verification_code']) {
-            $errorMessage = "<strong>Mã OTP không đúng</strong><br>Vui lòng kiểm tra lại!";
-        }
-    } elseif (isset($_POST['btnResend'])) {
+       $code = $_SESSION['otp_code'] ?? null; 
+    //     if ($code == $_POST['verification_code']) {
+    //         $email = $_SESSION['email'];
+    //         $phone_number = $_SESSION[''];
+    //         $password_hash = password_hash($_SESSION['password'], PASSWORD_BCRYPT);
+    //         $full_name = $_SESSION['fullname'];
+    //         $date_of_birth =  $_SESSION['dayofbirth'];
+    //         $gender = $_SESSION['gender'];
+    //         $profile_picture_url = 'user_default.png';
+    //         $bio =" "; 
+    //         $status="active";
+    //         $accountController->SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status);
+    //         header("Location: signup_success.php"); 
+    //         exit();
+    //     } elseif (empty($_POST["verification_code"])) {
+    //         $errorMessage = "<strong>Vui lòng điền vào trường dữ liệu</strong><br>Điền vào trường dữ liệu bên dưới để thực hiện xác nhận Email của bạn!";
+    //     } elseif ($code != $_POST['verification_code']) {
+    //         $errorMessage = "<strong>Mã OTP không đúng</strong><br>Vui lòng kiểm tra lại!";
+    //     }
+       if(empty($_POST["verification_code"])) {
+         $errorMessage = "<strong>Vui lòng điền vào trường dữ liệu</strong><br>Điền vào trường dữ liệu bên dưới để thực hiện xác nhận Email của bạn!";
+       }else if($code == $_POST['verification_code']){
+            if(isset($_SESSION['resetpassword']) && $_SESSION['resetpassword']==true){
+                $email = $_SESSION['email'] ?? null;
+                if($email){
+                    header("Location: resetpassword.php"); 
+                    exit();
+                } else {
+                    $errorMessage = "Không tìm thấy thông tin email trong phiên. Vui lòng thử lại.";
+                }
+                }else {
+                    $email = $_SESSION['email'] ?? null;
+                    $phone_number = $_SESSION['phone_number'] ?? null;
+                    $password = $_SESSION['password'] ?? null;
+                    $full_name = $_SESSION['fullname'] ?? '';
+                    $date_of_birth = $_SESSION['dayofbirth'] ?? null;
+                    $gender = $_SESSION['gender'] ?? '';
+                    
+                    if ($email && $password) {
+                        $password_hash = password_hash($password, PASSWORD_BCRYPT);
+                        $profile_picture_url = 'user_default.png';
+                        $bio = " "; 
+                        $status = "active";
+                        $accountController->SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status);
+                        header("Location: signup_success.php"); 
+                        exit();
+                    } else {
+                        $errorMessage = "Dữ liệu không đầy đủ để đăng ký. Vui lòng thử lại.";
+                    }
+                }
+            } else {
+                $errorMessage = "<strong>Mã OTP không đúng</strong><br>Vui lòng kiểm tra lại!";
+            }
+                }
+
+    elseif (isset($_POST['btnResend'])) {
         $accountService = new AccountService();
         if (isset($_SESSION['email'])) {
             $email = $_SESSION['email'];
