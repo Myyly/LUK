@@ -9,8 +9,8 @@ class AccountController {
     public function __construct() {
         $this->account = new AccountData();
     }
-    public function SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status){
-        return $this->account->SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status);
+    public function SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url){
+        return $this->account->SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url);
     }
     public function checkEmailExist($email){
         return $this->account->checkEmailExist($email);
@@ -27,7 +27,17 @@ class AccountController {
     public function findUserbyId($id){
         return $this->account->findUserbyId($id);
     }
-
-
+    public function updateAvatar($id, $imageData) {
+        return $this->account->updateAvatar($id,$imageData);
+}
+public function updateCover($id, $imageData) {
+    return $this->account->updateCover($id,$imageData);
+}
+public function updateUserProfile($id, $profile_picture_url, $cover_photo_url, $bio) {
+    return $this->account->updateUserProfile($id,$profile_picture_url,$cover_photo_url,$bio);
+}
+public function getTotalFriends($userId) {
+    return $this->account->getTotalFriends($userId);
+}
 }
 ?>

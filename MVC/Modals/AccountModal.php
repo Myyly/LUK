@@ -14,8 +14,9 @@ class AccountModal{
     public $update_at;
     public $last_active;
     public $status;
+    public $cover_photo_url;
 
-    public function __construct($user_id,$email,$phone_number,$password_hash,$full_name,$profile_picture_url,$bio,$date_of_birth,$gender,$create_at,$update_at,$last_active,$status){
+    public function __construct($user_id,$email,$phone_number,$password_hash,$full_name,$profile_picture_url,$bio,$date_of_birth,$gender,$create_at,$update_at,$last_active,$status,$cover_photo_url){
         $this->user_id = $user_id;
         $this->email = $email;
         $this->phone_number = $phone_number;
@@ -29,6 +30,7 @@ class AccountModal{
         $this->update_at=$update_at;
         $this->last_active=$last_active;
         $this->status=$status;
+        $this->cover_photo_url = $cover_photo_url;
     }
     public function getUser_id(){
         return $this->user_id;
@@ -107,6 +109,12 @@ class AccountModal{
     }
     public function setStatus($status){
         $this->status = $status;
+    }
+    public function getCover_photo_url(){
+        return $this->cover_photo_url;
+    }
+    public function setCover_photo_url($cover_photo_url){
+        $this->cover_photo_url = $cover_photo_url;
     }
     }
 ?>

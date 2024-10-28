@@ -3,7 +3,8 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-require_once '../../Controllers/Account.php';
+// require_once '../../Controllers/Account.php';
+require_once 'MVC/Controllers/Account.php';
 $accountController = new AccountController();
 $idUser = $_SESSION['idUser'];
 $user = $accountController->findUserbyId($idUser);
@@ -11,35 +12,33 @@ $user = $accountController->findUserbyId($idUser);
 <link rel="stylesheet" href="/CSS/variables.css">
 <div class="header">
     <div class="logo">
-        <a href="/index.php"><img src="/assets/images/LuxLogo.png" alt="Logo"></a>
+        <a href="index.php"><img src="/assets/images/LuxLogo.png" alt="Logo"></a>
     </div>
     <div class="search">
         <input type="text" placeholder="Tìm kiếm trên Facebook">
         <i class="fas fa-search"></i>
     </div>
     <div class="nav-icons">
-        <a href="/index.php" class="icon"><i class="fas fa-home"></i></a>
+        <a href="index.php" class="icon"><i class="fas fa-home"></i></a>
         <a href="#" class="icon"><i class="fas fa-tv"></i></a>
         <a href="#" class="icon"><i class="fas fa-users"></i></a>
         <a href="#" class="icon"><i class="fas fa-comment-alt"></i></a>
         <a href="#" class="icon"><i class="fas fa-bell"></i></a>
         <div class="avatar">
         <?php
-    $img = $user->getProfile_picture_url();
-    if ($img) {
-        $base64Image = base64_encode($img);
-        $avatarSrc = 'data:image/jpeg;base64,' . $base64Image; 
-       // echo '<img id="avatar_img" class="avatar" src="' . $avatarSrc . '" alt="">';
-    }
+  $img = $user->getProfile_picture_url();
+  if ($img) {
+      $base64Image = base64_encode($img);
+      $avatarSrc = 'data:image/jpeg;base64,' . $base64Image; 
+    //  echo '<img id="avatar_img" class="avatar" src="' . $avatarSrc . '" alt="">';
+  }
 ?>
-
-<!-- Hiển thị avatar -->
-<img src="<?php echo $avatarSrc; ?>" alt="User Avatar" onclick="toggleDropdown()" style="width:50px; height:50px; border-radius:50%;">
+        <img src="<?php echo $avatarSrc; ?>" alt="User Avatar" onclick="toggleDropdown()" style="width:50px; height:50px; border-radius:50%;">
             <div class="dropdown-menu">
                 <form action="" method="GET">
                 <ul>
                         <li>
-                            <a href="profile.php?id=<?php echo $idUser; ?>"><i class="fas fa-user"></i> Profile</a>
+                            <a href="./MVC/Views/Account/profile.php?id=<?php echo $idUser; ?>"><i class="fas fa-user"></i> Profile</a>
                         </li>
                         <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
                         <li><a href="#"><i class="fas fa-question-circle"></i> Help</a></li>

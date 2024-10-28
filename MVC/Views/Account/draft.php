@@ -1,128 +1,298 @@
-<?php 
+<?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+require_once '../../Controllers/Account.php';
+
+$accountController = new AccountController();
+$idUser = $_SESSION['idUser'];
+$user = $accountController->findUserbyId($idUser);
+$user->getProfile_picture_url();
+$activeTab = isset($_GET['sk']) ? $_GET['sk'] : '';
+$idUser = isset($_GET['id']) ? $_GET['id'] : '';
+//var_dump($activeTab); 
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/assets/images/LuxLogo.png" type="image/png"> 
+    <title>Lux</title>
+    <link rel="icon" href="/assets/images/LuxLogo.png" type="image/png">
     <link rel="stylesheet" href="/assets/CSS/variables.css">
-    <title>Email Verification</title>
-    <style>
-    body {
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2; 
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column; 
-    align-items: center;
-    height: 100vh;
-}
-
-.header {
-    width: 100%;
-    background-color: white; /* Màu nền của header */
-    padding: 15px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 50px;
-}
-
-.header .logo h1 {
-    color: var(--primary-color); /* Màu logo */
-    font-size: 36px;
-    font-weight: bold;
-}
-
-.container {
-    background-color: white; /* Màu nền của container */
-    padding: 30px; /* Tăng khoảng cách bên trong */
-    border-radius: 8px; /* Bo tròn các góc */
-    box-shadow: 0 0 15px rgba(0,0,0,0.2); /* Tăng độ mờ cho bóng */
-    text-align: center; /* Căn giữa văn bản */
-    width: 500px; /* Đặt chiều rộng cố định */
-    border: 1px solid #e0e0e0; /* Thêm đường viền nhẹ */
-    margin-top: 20px; /* Thêm khoảng cách trên để tách khỏi header */
-}
-
-h3 {
-    font-size: 24px; /* Kích thước tiêu đề lớn hơn */
-    margin-bottom: 15px; /* Thêm khoảng cách dưới tiêu đề */
-}
-
-p {
-    font-size: 14px; /* Kích thước văn bản mô tả */
-    color: #606770; /* Màu văn bản mô tả */
-    margin-bottom: 20px; /* Khoảng cách dưới mô tả */
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 12px; /* Tăng kích thước padding */
-    margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    font-size: 16px; /* Kích thước văn bản trong input */
-}
-
-button {
-    width: 100%;
-    padding: 12px; /* Tăng kích thước padding */
-    background-color: var(--primary-color); /* Màu nền của nút */
-    color: white; /* Màu chữ */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px; /* Kích thước văn bản trong nút */
-}
-
-button:hover {
-    background-color: var(--link-hover-color);
-}
-
-.resend {
-    margin-top: 15px; /* Khoảng cách trên của phần gửi lại */
-}
-
-.resend a {
-    color: var(--primary-color); /* Màu chữ của liên kết gửi lại */
-    text-decoration: none; /* Không gạch chân */
-    font-size: 14px; /* Kích thước văn bản liên kết */
-}
-
-    </style>
+    <link rel="stylesheet" href="/assets/CSS/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body>
-<div class="header">
-        <div class="logo">
-            <h1>LUX</h1>
+    <?php include 'header.php'; ?>
+    <div class="profile-container">
+        <div class="cover-photo">
+            <img src="https://via.placeholder.com/850x250" alt="Cover Photo">
+            <div class="avatar-profile">
+                <?php
+                $img = $user->getProfile_picture_url();
+                $avatarSrc = '/assets/images/' . $img;
+                echo '<img id="avatar_img" class="avatar" src="' . $avatarSrc . '" alt="">';
+                ?>
+                <!-- Avatar Upload Icon -->
+                <label for="avatar-upload" class="avatar-upload-icon">
+                    <i class="fas fa-camera" style="font-size: 20px; color: black;"></i>
+                </label>
+                <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="previewImage(event)">
+            </div>
+        </div>
+        <div class="profile-info">
+    <div class="user-details">
+        <h2><?php echo $user->getFull_name(); ?></h2>
+        <p>100 friends</p>
+        <button class="edit-information-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">Chỉnh sửa trang cá nhân</button>
+    </div>
+</div>
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Chỉnh sửa trang cá nhân</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="mb-3">
+                        <label for="profileImage" class="form-label">Chỉnh sửa ảnh đại diện</label>
+                        <input type="file" class="form-control" id="profileImage">
+                    </div>
+                    <div class="mb-3">
+                        <label for="coverImage" class="form-label">Chỉnh sửa ảnh bìa</label>
+                        <input type="file" class="form-control" id="coverImage">
+                    </div>
+                    <div class="mb-3">
+                        <label for="bio" class="form-label">Tiểu sử</label>
+                        <textarea class="form-control" id="bio" rows="3"><?php echo $user->getBio(); ?></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveChanges">Lưu thay đổi</button>
+            </div>
         </div>
     </div>
-    <div class="container">
-        <h3>Chúng tôi đã gửi mã của bạn đến <?php echo $_SESSION['email']; ?></h3>
-        <p>Vui lòng kiểm tra mã trong email của bạn.Mã này gồm 4 số.</p>
-        <?php if (!empty($errorMessage)): ?>
-                <div class="error-message">
-                    <?php echo $errorMessage; ?>
+    </div>
+
+        <div class="profile-nav">
+            <form method="GET" action="">
+            <input type="hidden" name="id" value="<?php echo $idUser; ?>">
+
+                <ul>
+                    <li>
+                        <button type="submit" name="sk" value="posts" class="nav-button <?php echo ($activeTab == 'posts') ? 'active' : ''; ?>">
+                            <i class="fas fa-th"></i> Bài viết
+                        </button>
+                    </li>
+                    <li>
+                        <button type="submit" name="sk" value="about" class="nav-button <?php echo ($activeTab == 'about') ? 'active' : ''; ?>">
+                            <i class="fas fa-info-circle"></i> Giới thiệu
+                        </button>
+                    </li>
+                    <li>
+                        <button type="submit" name="sk" value="friends" class="nav-button <?php echo ($activeTab == 'friends') ? 'active' : ''; ?>">
+                            <i class="fas fa-user-friends"></i> Bạn bè
+                        </button>
+                    </li>
+                    <li>
+                        <button type="submit" name="sk" value="photos" class="nav-button <?php echo ($activeTab == 'photos') ? 'active' : ''; ?>">
+                            <i class="fas fa-camera"></i> Ảnh
+                        </button>
+                    </li>
+                    <li>
+                        <button type="submit" name="sk" value="more" class="nav-button <?php echo ($activeTab == 'more') ? 'active' : ''; ?>">
+                            <i class="fas fa-ellipsis-h"></i> Xem thêm
+                        </button>
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <div class="content-section">
+    <?php
+    if ($activeTab == 'friends' ||$activeTab == 'friends_all') {
+        ?>
+        <div class="friends-section">
+            <h3>Bạn bè</h3>
+            <div class="search-friends">
+                <input type="text" class="form-control" placeholder="Tìm kiếm bạn bè">
+            </div>
+            <form method="GET" action="">
+                <input type="hidden" name="id" value="<?php echo $idUser; ?>"> <!-- Giữ lại id trong URL -->
+                <div class="friends-filter mt-3">
+                    <ul class="nav nav-pills">
+                        <li>
+                            <button type="submit" name="sk" value="friends_all" class="nav-button <?php echo ($activeTab == 'friends_all') ? 'active' : ''; ?>">
+                                Tất cả bạn bè
+                            </button>
+                        </li>
+                    </ul>
                 </div>
-            <?php endif; ?>
-        <h3>Nhập mã gồm 4 chữ số</h3>
-        <form method="post" action="">
-            <input type="text" name="verification_code" placeholder="L-XXXXXX">
-            <button type="submit" name="btnConfirm">Tiếp tục</button>
-        </form>
-        <div class="resend">
-    <form action="" method="post">
-        <input type="hidden" name="resendEmail" value="true">
-        <button type="submit" class="btn btn-link" name = "btnResend">Gửi lại email</button>
-    </form>
+            </form>
+        </div>
+        <?php
+    }
+     if ($activeTab == 'friends_all') {
+        ?>
+        <div class="friends-list mt-4">
+            <h4>Danh sách bạn bè</h4>
+            <div class="friend-item d-flex align-items-center">
+                <img src="/path/to/avatar1.jpg" alt="Friend 1" class="friend-avatar rounded-circle me-3" style="width: 60px; height: 60px;">
+                <div>
+                    <h5>Thủy Trâm</h5>
+                    <p class="text-muted">176 bạn chung</p>
+                </div>
+            </div>
+            <div class="friend-item d-flex align-items-center mt-3">
+                <img src="/path/to/avatar2.jpg" alt="Friend 2" class="friend-avatar rounded-circle me-3" style="width: 60px; height: 60px;">
+                <div>
+                    <h5>Nguyễn Đình Phong</h5>
+                    <p class="text-muted">46 bạn chung</p>
+                </div>
+            </div>
+            <div class="friend-item d-flex align-items-center mt-3">
+                <img src="/path/to/avatar3.jpg" alt="Friend 3" class="friend-avatar rounded-circle me-3" style="width: 60px; height: 60px;">
+                <div>
+                    <h5>Thị Ni Lê</h5>
+                    <p class="text-muted">218 bạn chung</p>
+                </div>
+            </div>
+           
+        </div>
+        <?php
+    }elseif ($activeTab == 'photos') {
+        ?>
+            <div class="photos-section">
+                <h3>Photos</h3>
+                <p>This is the Photos section. Your photos will be displayed here.</p>
+            </div>
+        <?php
+        } elseif ($activeTab == 'more') {
+        ?>
+            <div class="more-section">
+                <h3>More</h3>
+                <p>This is the More section. Additional information and options can be added here.</p>
+            </div>
+            <?php
+            } elseif ($activeTab == 'about') {
+            ?>
+                <div class="about-section">
+                    <h3>About</h3>
+                    <p>This is the About section. Here you can add more information about yourself.</p>
+                </div>
+                <?php
+          }  else if ($activeTab == 'posts') {
+                // Nội dung cho tab Posts
+            ?>
+                <div class="container mt-3">
+                    <div class="create-post-section">
+                        <div class="create-post">
+                            <img src="<?php echo $avatarSrc; ?>" alt="User Avatar" class="user-avatar">
+                            <input type="text" placeholder="Bạn đang nghĩ gì?" class="post-input" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="createPostModalLabel">Tạo bài viết</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                                <div class="d-flex mb-3">
+                                    <img src="<?php echo $avatarSrc; ?>" alt="User Avatar" style="width:50px; height:50px; border-radius:50%;">
+                                    <div class="ms-3">
+                                        <h6>Mỹ Ly</h6>
+                                        <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Công khai
+                                        </button>
+                                    </div>
+                                </div>
+                                <textarea class="form-control" rows="4" placeholder="Bạn đang nghĩ gì?"></textarea>
+                            </div>
+
+                            <!-- Modal Footer -->
+                            <div class="modal-footer">
+                                <div class="d-flex justify-content-between w-100">
+                                    <div>
+                                        <button class="btn btn-light"><i class="fas fa-photo-video"></i> Ảnh/Video</button>
+                                        <button class="btn btn-light"><i class="fas fa-smile"></i> Cảm xúc</button>
+                                        <button class="btn btn-light"><i class="fas fa-location-arrow"></i> Địa điểm</button>
+                                    </div>
+                                    <button class="btn btn-primary">Đăng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post">
+                    <div class="post-header">
+                        <img src="https://via.placeholder.com/50" alt="User Avatar">
+                        <div class="post-user">
+                            <p><strong>John Doe</strong></p>
+                            <p>1 hour ago</p>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>This is an example post content just like Facebook.</p>
+                    </div>
+                    <div class="post-footer">
+                        <button><i class="fas fa-thumbs-up"></i> Thích</button>
+                        <button><i class="fas fa-comment"></i> Bình luận</button>
+                        <button><i class="fas fa-share"></i> Chia sẻ</button>
+                    </div>
+                </div>-
+                <?php
+            } else {
+            ?>
+                <div class="post">
+                    <div class="post-header">
+                        <img src="https://via.placeholder.com/50" alt="User Avatar">
+                        <div class="post-user">
+                            <p><strong>John Doe</strong></p>
+                            <p>1 hour ago</p>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>This is an example post content just like Facebook.</p>
+                    </div>
+                    <div class="post-footer">
+                        <button><i class="fas fa-thumbs-up"></i> Like</button>
+                        <button><i class="fas fa-comment"></i> Comment</button>
+                        <button><i class="fas fa-share"></i> Share</button>
+                    </div>
+                </div>
+    <?php } ?>
 </div>
+
     </div>
 </body>
+
 </html>
+<script>
+    function previewImage(event) {
+        const image = document.querySelector('.avatar-profile img');
+        image.src = URL.createObjectURL(event.target.files[0]); // Preview the selected image
+    }
+</script>

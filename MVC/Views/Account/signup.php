@@ -45,7 +45,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     }
+    if (isset($_POST['Login'])) {
 
+        $contact = $_POST['email'];
+        $pass = $_POST['password'];
+        if($contact == null && $pass == null){
+            $errorMessage= "Email hoặc số di động bạn nhập không kết nối với tài khoản nào.";
+        }else{
+        if (filter_var($contact, FILTER_VALIDATE_EMAIL)) {
+            $user = $accountController->LoginByEmail($contact); 
+        }
+        elseif (preg_match('/^[0-9]{10,15}$/', $contact)) {
+            $user = $accountController->LoginByPhoneNumber($contact); 
+        } else {
+            $errorMessage = "Dữ liệu không hợp lệ. Vui lòng nhập email hoặc số điện thoại.";
+            exit();
+        }
+        if ($user != null) {
+            if (($user->getEmail() == $contact || $user->getPhone_numberl() == $contact) && password_verify($pass, $user->getPassword_hash())) {
+                $_SESSION['idUser'] = $user->getUser_id();
+                // echo "Đăng nhập thành công!";
+                header("Location: /index.php"); 
+                exit();
+            } else {
+                $errorMessage= " Mật khẩu không đúng.";
+            }
+        } else {
+            $errorMessage= "Email hoặc số di động bạn nhập không kết nối với tài khoản nào.";
+        }
+    }
+    }
     }
 ?>
 <!DOCTYPE html>
@@ -139,9 +168,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h1>LUX</h1>
         </div>
         <div class="login-form">
-            <input type="text" placeholder="Email hoặc điện thoại">
-            <input type="password" placeholder="Mật khẩu">
-            <button class="login-btn">Đăng nhập</button>
+        <form action="" method="POST">
+            <input type="text" placeholder="Email hoặc điện thoại" name ='email'>
+            <input type="password" placeholder="Mật khẩu" name='password'>
+            <button class="login-btn" name ='Login'>Đăng nhập</button>
+            </form>
         </div>
     </div>
 

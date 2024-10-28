@@ -9,7 +9,7 @@ class AccountData extends Database {
     public function __construct() {
         $this->conn = new Database();
     }
-    public function SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status) {
+    public function SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url) {
         if ($email === NULL && $phone_number === NULL) {
             throw new InvalidArgumentException('Both email and phone number cannot be NULL');
         }
@@ -17,14 +17,14 @@ class AccountData extends Database {
             throw new InvalidArgumentException('One or more required parameters are NULL');
         }
     
-        $query = "INSERT INTO Users (email, phone_number, password_hash, full_name, date_of_birth, gender, profile_picture_url, bio, status) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO Users (email, phone_number, password_hash, full_name, date_of_birth, gender, profile_picture_url, bio, status,cover_photo_url) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->getConnection()->prepare($query);
         if ($stmt === false) {
             throw new Exception('Prepare failed: ' . $this->conn->getConnection()->error);
         }
     
-        if (!$stmt->bind_param("sssssssss", $email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status)) {
+        if (!$stmt->bind_param("ssssssssss", $email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url)) {
             throw new Exception('Binding parameters failed: ' . $stmt->error);
         }
     
@@ -77,7 +77,8 @@ class AccountData extends Database {
                 $row['created_at'],
                 $row['updated_at'],
                 $row['last_active'],
-                $row['status']
+                $row['status'],
+                $row['cover_photo_url']
             );
             $stmt->close();
             return $user;
@@ -110,7 +111,9 @@ class AccountData extends Database {
                 $row['created_at'],
                 $row['updated_at'],
                 $row['last_active'],
-                $row['status']
+                $row['status'],
+                $row['cover_photo_url']
+
             );
             $stmt->close();
             return $user;
@@ -157,7 +160,9 @@ class AccountData extends Database {
                 $row['created_at'],
                 $row['updated_at'],
                 $row['last_active'],
-                $row['status']
+                $row['status'],
+                $row['cover_photo_url']
+
             );
             $stmt->close();
             return $user;
@@ -166,6 +171,69 @@ class AccountData extends Database {
             return null;
         }
     }
-
+    public function updateAvatar($id, $imageData) {
+        $stmt = $this->conn->getConnection()->prepare("UPDATE Users SET profile_picture_url = ? WHERE user_id = ?");
+        if ($stmt === false) {
+            throw new Exception('Prepare failed: ' . $this->conn->getConnection()->error);
+        }
+        $stmt->bind_param("bi", $imageData, $id);
+        $stmt->send_long_data(0, $imageData);
+    
+        if ($stmt->execute() === false) {
+            throw new mysqli_sql_exception('Execute failed: ' . $stmt->error);
+        }
+    
+        $stmt->close();
+        return true;
+    }
+    public function updateCover($id, $imageData) {
+        $stmt = $this->conn->getConnection()->prepare("UPDATE Users SET cover_photo_url = ? WHERE user_id = ?");
+        if ($stmt === false) {
+            throw new Exception('Prepare failed: ' . $this->conn->getConnection()->error);
+        }
+        // Sử dụng kiểu dữ liệu đúng
+        $stmt->bind_param("bi", $imageData, $id);
+        $stmt->send_long_data(0, $imageData);
+    
+        if ($stmt->execute() === false) {
+            throw new mysqli_sql_exception('Execute failed: ' . $stmt->error);
+        }
+    
+        $stmt->close();
+        return true;
+    }
+    public function updateUserProfile($id, $profile_picture_url, $cover_photo_url, $bio) {
+        $query = "UPDATE Users SET profile_picture_url = ?, cover_photo_url = ?, bio = ? WHERE user_id = ?";
+        $stmt = $this->conn->getConnection()->prepare($query);
+    
+        if (!$stmt) {
+            throw new Exception("Prepare statement failed: " . $this->conn->getConnection()->error);
+        }
+        $stmt->bind_param("sssi", $profile_picture_url, $cover_photo_url, $bio, $id);
+        $success = $stmt->execute();
+        if (!$success) {
+            throw new Exception("Update failed: " . $stmt->error);
+        }
+        $stmt->close();
+        return $success;
+    }
+    public function getTotalFriends($userId) {
+        $query = "SELECT COUNT(*) AS total_friends 
+                  FROM Friends 
+                  WHERE (user_id = ? OR friend_id = ?) 
+                  AND status = 'accepted'";
+        
+        $stmt = $this->conn->getConnection()->prepare($query);
+        
+        if (!$stmt) {
+            throw new Exception("Prepare statement failed: " . $this->conn->getConnection()->error);
+        }
+        $stmt->bind_param("ii", $userId, $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        return $row['total_friends'];
+    }
 }
 ?>
