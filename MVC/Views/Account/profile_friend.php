@@ -4,11 +4,19 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require_once '../../Controllers/Account.php';
+// require_once '../../Process/profile_process.php';
 $accountController = new AccountController();
 $idUser = $_SESSION['idUser'];
-$user = $accountController->findUserbyId($idUser);
-$user->getProfile_picture_url();
-$activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'post';
+// $friendsList = $accountController->getFriendsList($idUser);
+$activeTab = isset($_GET['sk']) ? $_GET['sk'] : '';
+// $idUser = isset($_GET['id']) ? $_GET['id'] : '';
+$idFriend = isset($_GET['idFriend']) ? $_GET['idFriend'] : '';
+$friend = $accountController->findUserbyId($idFriend);
+
+//var_dump($user->getCover_photo_url()); 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,398 +27,257 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'post';
     <title>Lux</title>
     <link rel="icon" href="/assets/images/LuxLogo.png" type="image/png">
     <link rel="stylesheet" href="/assets/CSS/variables.css">
+    <link rel="stylesheet" href="/assets/CSS/profile_friend.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
-        }
-
-        .profile-container {
-            max-width: 850px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .cover-photo {
-            position: relative;
-            width: 100%;
-            height: 250px;
-            background-color: #ddd;
-        }
-
-        .cover-photo img {
-            width: 100%;
-            height: auto;
-        }
-
-        .avatar-profile {
-            position: absolute;
-            top: 230px;
-            left: 10%;
-            transform: translateX(-50%);
-            z-index: 1;
-        }
-
-        .avatar-profile img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 3px solid white;
-        }
-
-        .profile-info {
-            padding-top: 100px;
-            text-align: center;
-        }
-
-        .user-details {
-            text-align: left;
-            padding-left: 170px;
-            margin-top: -95px;
-        }
-
-        .add-friend-btn,
-        .message-btn {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
-            cursor: pointer;
-            margin-right: 10px;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-
-        .add-friend-btn:hover,
-        .message-btn:hover {
-            background-color: var(--link-hover-color);
-        }
-
-        .profile-nav {
-            margin: 20px 0;
-            border-top: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-            background-color: #fff;
-        }
-
-        .profile-nav ul {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            justify-content: space-around;
-            margin: 0;
-        }
-
-        .profile-nav li {
-            margin: 0;
-        }
-
-        .nav-button {
-            background: none;
-            border: none;
-            color: #65676b;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 15px 20px;
-            transition: color 0.3s, border-bottom 0.3s;
-            position: relative;
-        }
-
-        .nav-button:hover {
-            color: var(--link-hover-color);
-            border-radius: 5px;
-            background: #d1d3d5;
-        }
-
-        .nav-button.active {
-            color: var(--link-hover-color);
-            font-weight: bold;
-        }
-
-        .nav-button.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: 3px;
-            background-color: var(--link-hover-color);
-        }
-
-        .content-section {
-            padding: 20px;
-        }
-
-        .post {
-            background-color: #f7f7f7;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-        }
-
-        .post-header img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-
-        .post-user p {
-            margin: 0;
-            font-size: 14px;
-            color: #606770;
-        }
-
-        .post-content {
-            margin: 10px 0;
-            font-size: 16px;
-            color: #1c1e21;
-        }
-
-        .post-footer {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .post-footer button {
-            background-color: #e4e6eb;
-            border: none;
-            border-radius: 5px;
-            padding: 8px 12px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-size: 14px;
-            color: #050505;
-            display: flex;
-            align-items: center;
-        }
-
-        .post-footer button:hover {
-            background-color: #d1d3d5;
-        }
-
-        .post-footer button i {
-            margin-right: 5px;
-        }
-
-        @media (max-width: 600px) {
-            .profile-nav ul {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .profile-nav li {
-                margin: 10px 0;
-            }
-
-            .nav-button {
-                padding: 10px 0;
-                width: 100%;
-                text-align: center;
-            }
-
-            .avatar-profile {
-                position: relative;
-                margin: -75px auto 20px;
-                text-align: center;
-            }
-
-            .avatar-profile img {
-                margin: 0 auto;
-            }
-
-            .profile-info {
-                padding: 80px 10px 20px 10px;
-            }
-        }
-
-        /* Updated CSS for the avatar upload icon */
-        .avatar-upload-icon {
-            position: absolute;
-            bottom: 20px;
-            right: 20px; /* Adjust this to move the icon left */
-            cursor: pointer;
-            color: black;
-            transition: transform 0.3s ease, font-size 0.3s ease;
-        }
-
-        /* Mobile-specific adjustments */
-        @media (max-width: 600px) {
-            .avatar-upload-icon {
-                right: 15px; /* Mobile adjustment */
-            }
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+<style>
+</style>
 
 <body>
     <?php include 'header.php'; ?>
     <div class="profile-container">
-    <div class="cover-photo">
-            <img src="https://via.placeholder.com/850x250" alt="Cover Photo">
+        <div class="cover-photo">
+            <?php
+            $cover = $friend->getCover_photo_url();
+            if ($cover) {
+                $base64Image = base64_encode($cover);
+                $coverSrc = 'data:image/jpeg;base64,' . $base64Image;
+                echo '<img id="cover_img" src="' . $coverSrc . '" alt="">';
+            } else {
+                echo '<img id="cover_img" src="https://via.placeholder.com/850x250" alt="">';
+            }
+            ?>
             <div class="avatar-profile">
                 <?php
-                $img = $user->getProfile_picture_url();
-                $avatarSrc = '/assets/images/' . $img;
-                echo '<img id="avatar_img" class="avatar" src="' . $avatarSrc . '" alt="">';
+                $img = $friend->getProfile_picture_url();
+                if ($img) {
+                    $base64Image = base64_encode($img);
+                    $avatarSrc = 'data:image/jpeg;base64,' . $base64Image;
+                    echo '<img id="avatar_img" class="avatar" src="' . $avatarSrc . '" alt="">';
+                } else {
+                    echo '<img id="avatar_img" class="avatar" src="https://via.placeholder.com/150x150" alt="">'; // Thay đường dẫn ảnh mặc định
+                }
                 ?>
-                <!-- Avatar Upload Icon -->
-                <label for="avatar-upload" class="avatar-upload-icon">
-                    <i class="fas fa-camera" style="font-size: 20px; color: black;"></i>
-                </label>
-                <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="previewImage(event)">
             </div>
         </div>
         <div class="profile-info">
             <div class="user-details">
-                <h2><?php echo $user->getFull_name(); ?></h2>
-                <p>100 friends</p>
-                <button class="add-friend-btn">Add Friend</button>
-                <button class="message-btn">Message</button>
+                <div class="user-info">
+                    <h2><?php echo $friend->getFull_name(); ?></h2>
+                    <?php
+                    $MutualFriendsCount = $accountController->getMutualFriendsCount($idUser, $idFriend);
+                    ?>
+                    <p>
+                        <?php
+                        if ($MutualFriendsCount > 0) { // Kiểm tra nếu có bạn chung
+                            echo $MutualFriendsCount . " bạn chung";
+                        }
+                        ?>
+                    </p>
+                </div>
+                <div class="user-actions">
+                <form method="POST" action="../../Process/profile_friend_process.php">
+                    <!-- <button class="unfriend-btn" type="submit" name="unfriend">Huỷ kết bạn</button> -->
+                    <button type="button" class="unfriend-btn" data-bs-toggle="modal" data-bs-target="#unfriendModal">
+                                            Hủy kết bạn
+                                        </button>
+                    <button class="message-friend-btn"type="submit" name="message">Nhắn tin</button>
+                    </form>
+                </div>
             </div>
         </div>
-
         <div class="profile-nav">
             <form method="GET" action="">
+                <input type="hidden" name="idFriend" value="<?php echo $idFriend; ?>">
                 <ul>
                     <li>
-                        <button type="submit" name="tab" value="posts" class="nav-button <?php echo ($activeTab == 'posts') ? 'active' : ''; ?>">
-                            <i class="fas fa-th"></i> Posts
+                        <button type="submit" name="sk" value="posts" class="nav-button <?php echo ($activeTab == 'posts') ? 'active' : ''; ?>">
+                            <i class="fas fa-th"></i> Bài viết
                         </button>
                     </li>
                     <li>
-                        <button type="submit" name="tab" value="about" class="nav-button <?php echo ($activeTab == 'about') ? 'active' : ''; ?>">
-                            <i class="fas fa-info-circle"></i> About
+                        <button type="submit" name="sk" value="about" class="nav-button <?php echo ($activeTab == 'about') ? 'active' : ''; ?>">
+                            <i class="fas fa-info-circle"></i> Giới thiệu
                         </button>
                     </li>
                     <li>
-                        <button type="submit" name="tab" value="friends" class="nav-button <?php echo ($activeTab == 'friends') ? 'active' : ''; ?>">
-                            <i class="fas fa-user-friends"></i> Friends
+                        <button type="submit" name="sk" value="friends" class="nav-button <?php echo ($activeTab == 'friends') ? 'active' : ''; ?>">
+                            <i class="fas fa-user-friends"></i> Bạn bè
                         </button>
                     </li>
                     <li>
-                        <button type="submit" name="tab" value="photos" class="nav-button <?php echo ($activeTab == 'photos') ? 'active' : ''; ?>">
-                            <i class="fas fa-camera"></i> Photos
+                        <button type="submit" name="sk" value="photos" class="nav-button <?php echo ($activeTab == 'photos') ? 'active' : ''; ?>">
+                            <i class="fas fa-camera"></i> Ảnh
                         </button>
                     </li>
                     <li>
-                        <button type="submit" name="tab" value="more" class="nav-button <?php echo ($activeTab == 'more') ? 'active' : ''; ?>">
-                            <i class="fas fa-ellipsis-h"></i> More
+                        <button type="submit" name="sk" value="more" class="nav-button <?php echo ($activeTab == 'more') ? 'active' : ''; ?>">
+                            <i class="fas fa-ellipsis-h"></i> Xem thêm
                         </button>
                     </li>
                 </ul>
             </form>
+
         </div>
         <div class="content-section">
-    <?php
-    // Debug: Kiểm tra giá trị của activeTab
-    var_dump($activeTab); // Thêm dòng này để kiểm tra giá trị của activeTab
-
-    // Hiển thị nội dung cho tab friends_all trước
-    if ($activeTab == 'friends_all') {
-        echo '<h4>Danh sách bạn bè</h4>'; // Tiêu đề cho danh sách bạn bè
-        ?>
-        <div class="friends-list mt-4">
-            <div class="friend-item d-flex align-items-center">
-                <img src="/path/to/avatar1.jpg" alt="Friend 1" class="friend-avatar rounded-circle me-3" style="width: 60px; height: 60px;">
-                <div>
-                    <h5>Thủy Trâm</h5>
-                    <p class="text-muted">176 bạn chung</p>
+            <?php
+            if ($activeTab == 'friends' || $activeTab == 'friends_all') {
+            ?>
+                <div class="friends-section">
+                    <h3>Bạn bè</h3>
+                    <div class="search-friends">
+                        <input type="text" class="form-control" placeholder="Tìm kiếm bạn bè">
+                    </div>
+                    <form method="GET" action="">
+                        <input type="hidden" name="idFriend" value="<?php echo $idFriend; ?>">
+                        <div class="friends-filter mt-3">
+                            <ul class="nav nav-pills">
+                                <li>
+                                    <button type="submit" name="sk" value="friends_all" class="nav-button <?php echo ($activeTab == 'friends_all') ? 'active' : ''; ?>">
+                                        Tất cả bạn bè
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
                 </div>
-            </div>
-
-            <div class="friend-item d-flex align-items-center mt-3">
-                <img src="/path/to/avatar2.jpg" alt="Friend 2" class="friend-avatar rounded-circle me-3" style="width: 60px; height: 60px;">
-                <div>
-                    <h5>Nguyễn Đình Phong</h5>
-                    <p class="text-muted">46 bạn chung</p>
+            <?php
+            }
+            if ($activeTab == 'friends_all') {
+            ?>
+                <div class="friends-list mt-4">
+                    <h4>Danh sách bạn bè</h4>
+                <?php
+            } elseif ($activeTab == 'photos') {
+                ?>
+                    <div class="photos-section">
+                        <h3>Photos</h3>
+                        <p>This is the Photos section. Your photos will be displayed here.</p>
+                    </div>
+                <?php
+            } elseif ($activeTab == 'more') {
+                ?>
+                    <div class="more-section">
+                        <h3>More</h3>
+                        <p>This is the More section. Additional information and options can be added here.</p>
+                    </div>
+                <?php
+            } elseif ($activeTab == 'about') {
+                ?>
+                    <div class="about-section">
+                        <h3>About</h3>
+                        <p>This is the About section. Here you can add more information about yourself.</p>
+                    </div>
+                <?php
+            } else if ($activeTab == 'posts') {
+                ?>
+                    <div class="container mt-3">
+                        <div class="create-post-section">
+                            <div class="create-post">
+                                <img src="<?php echo $avatarSrc; ?>" alt="User Avatar" class="user-avatar">
+                                <input type="text" placeholder="Bạn đang nghĩ gì?" class="post-input" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createPostModalLabel">Tạo bài viết</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="d-flex mb-3">
+                                        <img src="<?php echo $avatarSrc; ?>" alt="User Avatar" style="width:50px; height:50px; border-radius:50%;">
+                                        <div class="ms-3">
+                                            <h6>Mỹ Ly</h6>
+                                            <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Công khai
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <textarea class="form-control" rows="4" placeholder="Bạn đang nghĩ gì?"></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="d-flex justify-content-between w-100">
+                                        <div>
+                                            <button class="btn btn-light"><i class="fas fa-photo-video"></i> Ảnh/Video</button>
+                                            <button class="btn btn-light"><i class="fas fa-smile"></i> Cảm xúc</button>
+                                            <button class="btn btn-light"><i class="fas fa-location-arrow"></i> Địa điểm</button>
+                                        </div>
+                                        <button class="btn btn-primary">Đăng</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post">
+                        <div class="post-header">
+                            <img src="https://via.placeholder.com/50" alt="User Avatar">
+                            <div class="post-user">
+                                <p><strong>John Doe</strong></p>
+                                <p>1 hour ago</p>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <p>This is an example post content just like Facebook.</p>
+                        </div>
+                        <div class="post-footer">
+                            <button><i class="fas fa-thumbs-up"></i> Thích</button>
+                            <button><i class="fas fa-comment"></i> Bình luận</button>
+                            <button><i class="fas fa-share"></i> Chia sẻ</button>
+                        </div>
+                    </div>-
+                <?php
+            } else {
+                ?>
+                    <div class="post">
+                        <div class="post-header">
+                            <img src="https://via.placeholder.com/50" alt="User Avatar">
+                            <div class="post-user">
+                                <p><strong>John Doe</strong></p>
+                                <p>1 hour ago</p>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <p>This is an example post content just like Facebook.</p>
+                        </div>
+                        <div class="post-footer">
+                            <button><i class="fas fa-thumbs-up"></i> Like</button>
+                            <button><i class="fas fa-comment"></i> Comment</button>
+                            <button><i class="fas fa-share"></i> Share</button>
+                        </div>
+                    </div>
+                <?php } ?>
                 </div>
-            </div>
-
-            <div class="friend-item d-flex align-items-center mt-3">
-                <img src="/path/to/avatar3.jpg" alt="Friend 3" class="friend-avatar rounded-circle me-3" style="width: 60px; height: 60px;">
-                <div>
-                    <h5>Thị Ni Lê</h5>
-                    <p class="text-muted">218 bạn chung</p>
-                </div>
-            </div>
-            <!-- Thêm các bạn khác vào đây -->
         </div>
-        <?php
-    } elseif ($activeTab == 'friends') {
-        // Nội dung cho tab Friends
-        ?>
-        <div class="friends-section">
-            <h3>Bạn bè</h3>
-            <div class="search-friends">
-                <input type="text" class="form-control" placeholder="Tìm kiếm bạn bè">
-            </div>
-
-            <!-- Tabs lọc danh sách bạn bè -->
-            <form method="GET" action="">
-                <input type="hidden" name="id" value="<?php echo $idUser; ?>"> <!-- Giữ lại id trong URL -->
-                <div class="friends-filter mt-3">
-                    <ul class="nav nav-pills">
-                        <li>
-                            <button type="submit" name="sk" value="friends_all" class="nav-button <?php echo ($activeTab == 'friends_all') ? 'active' : ''; ?>">
-                                Tất cả bạn bè
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            </form>
-        </div>
-        <?php
-    } elseif ($activeTab == 'photos') {
-        // Nội dung cho tab Photos
-    } elseif ($activeTab == 'more') {
-        // Nội dung cho tab More
-    } else {
-        // Nội dung cho các tab khác
-        ?>
-        <div class="post">
-            <div class="post-header">
-                <img src="https://via.placeholder.com/50" alt="User Avatar">
-                <div class="post-user">
-                    <p><strong>John Doe</strong></p>
-                    <p>1 hour ago</p>
-                </div>
-            </div>
-            <div class="post-content">
-                <p>This is an example post content just like Facebook.</p>
-            </div>
-            <div class="post-footer">
-                <button><i class="fas fa-thumbs-up"></i> Like</button>
-                <button><i class="fas fa-comment"></i> Comment</button>
-                <button><i class="fas fa-share"></i> Share</button>
-            </div>
-        </div>
-        <?php
-    }
-    ?>
-</div>
-
-    </div>
+                                                         <!-- MODAL HUỶ KẾT BẠN -->
+        <div class="modal fade" id="unfriendModal" tabindex="-1" aria-labelledby="unfriendModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="unfriendModalLabel">
+                                                            Hủy kết bạn với <?php echo $friend->getFull_name(); ?>
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Bạn có chắc chắn muốn hủy kết bạn với <?php echo $friend->getFull_name(); ?> không?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                        <form method="POST" action="../../Process/profile_friend_process.php">
+                                                        <input type="hidden" name="friend_id" value="<?php echo $idFriend; ?>">
+                                                        <button type="submit" class="btn btn-danger" name="Unfriend">Xác nhận</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 </body>
 
 </html>
 <script>
-    function previewImage(event) {
-        const image = document.querySelector('.avatar-profile img');
-        image.src = URL.createObjectURL(event.target.files[0]); // Preview the selected image
-    }
 </script>

@@ -39,5 +39,14 @@ public function updateUserProfile($id, $profile_picture_url, $cover_photo_url, $
 public function getTotalFriends($userId) {
     return $this->account->getTotalFriends($userId);
 }
+public function getFriendsList($userId) {
+    return $this->account->getFriendsList($userId);
+}
+public function unfriend($userId, $friendId) {
+        return $this->account->unfriend($userId,$friendId);
+}
+public function getMutualFriendsCount($userId1, $userId2) {
+    return $this->account->getMutualFriendsCount($userId1,$userId2);
+}
 }
 ?>

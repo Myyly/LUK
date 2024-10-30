@@ -8,6 +8,7 @@ require_once '../../Controllers/Account.php';
 $accountController = new AccountController();
 $idUser = $_SESSION['idUser'];
 $user = $accountController->findUserbyId($idUser);
+$friendsList = $accountController->getFriendsList($idUser);
 $user->getProfile_picture_url();
 $activeTab = isset($_GET['sk']) ? $_GET['sk'] : '';
 $idUser = isset($_GET['id']) ? $_GET['id'] : '';
@@ -79,7 +80,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         /* Cắt tròn cho avatar */
         object-fit: cover;
         margin-bottom: 20px;
-       
+
+    }
+
+    .content-section {
+        margin-left: 20px;
+        /* Lùi vào 20px từ cạnh trái */
     }
 </style>
 
@@ -120,17 +126,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </label>
             </div>
         </div>
-
-
-
-
         <div class="profile-info">
             <div class="user-details">
                 <h2><?php echo $user->getFull_name(); ?></h2>
                 <?php
                 $total_friends = $accountController->getTotalFriends($idUser);
                 ?>
-                <p><?php echo  $total_friends. " người bạn" ?></p>
+                <p><?php echo  $total_friends . " người bạn" ?></p>
                 <button class="edit-information-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">Chỉnh sửa trang cá nhân</button>
             </div>
         </div>
@@ -176,7 +178,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="text" class="form-control" placeholder="Tìm kiếm bạn bè">
                     </div>
                     <form method="GET" action="">
-                        <input type="hidden" name="id" value="<?php echo $idUser; ?>"> <!-- Giữ lại id trong URL -->
+                        <input type="hidden" name="id" value="<?php echo $idUser; ?>">
                         <div class="friends-filter mt-3">
                             <ul class="nav nav-pills">
                                 <li>
@@ -194,28 +196,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ?>
                 <div class="friends-list mt-4">
                     <h4>Danh sách bạn bè</h4>
-                    <div class="friend-item d-flex align-items-center">
-                        <img src="/path/to/avatar1.jpg" alt="Friend 1" class="friend-avatar rounded-circle me-3" style="width: 60px; height: 60px;">
-                        <div>
-                            <h5>Thủy Trâm</h5>
-                            <p class="text-muted">176 bạn chung</p>
-                        </div>
+                    <div class="row">
+                        <?php foreach ($friendsList as $friend): ?>
+                            <div class="col-md-6 mb-3">
+                                <div class="friend-item d-flex align-items-center justify-content-between p-2 border rounded">
+                                    <div class="d-flex align-items-center">
+                                        <?php $friend_ava = $friend['profile_picture_url'];
+                                        if ($friend_ava) {
+                                            $base64Image = base64_encode($friend_ava);
+                                            $friend_avaSrc = 'data:image/jpeg;base64,' . $base64Image;
+                                        }
+                                        ?>
+                                        <a href="profile_friend.php?idFriend=<?php echo $friend['friend_id']; ?>">
+                                            <img src="<?php echo $friend_avaSrc ?>"
+                                                alt="<?php echo htmlspecialchars($friend['full_name']); ?>"
+                                                class="friend-avatar rounded-circle me-3"
+                                                style="width: 60px; height: 60px;">
+                                        </a>
+                                        <div>
+                                            <h5 class="mb-0"><?php echo htmlspecialchars($friend['full_name']); ?></h5>
+                                            <?php
+                                            $MutualFriendsCount = $accountController->getMutualFriendsCount($idUser, $friend['friend_id']);
+                                            ?>
+                                            <p class="text-muted mb-0"><?php
+                                                                        if ($MutualFriendsCount > 0) { // Kiểm tra nếu có bạn chung
+                                                                            echo $MutualFriendsCount . " bạn chung";
+                                                                        }
+                                                                        ?></p>
+                                        </div>
+                                    </div>
+                                    <form method="POST" action="../../Process/profile_process.php">
+                                        <input type="hidden" name="friend_id" value="<?php echo $friend['friend_id']; ?>">
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#unfriendModal_<?php echo $friend['friend_id']; ?>">
+                                            Hủy kết bạn
+                                        </button>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="unfriendModal_<?php echo $friend['friend_id']; ?>" tabindex="-1" aria-labelledby="unfriendModalLabel_<?php echo $friend['friend_id']; ?>" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="unfriendModalLabel">
+                                                            Hủy kết bạn với <?php echo htmlspecialchars($friend['full_name']); ?>
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Bạn có chắc chắn muốn hủy kết bạn với <?php echo htmlspecialchars($friend['full_name']); ?> không?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                        <!-- Form submit -->
+                                                        <form method="POST" action="../../Process/profile_process.php">
+                                                            <input type="hidden" name="friend_id" value="<?php echo $friend['friend_id']; ?>">
+                                                            <button type="submit" class="btn btn-danger" name="Unfriend">Xác nhận</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                    <div class="friend-item d-flex align-items-center mt-3">
-                        <img src="/path/to/avatar2.jpg" alt="Friend 2" class="friend-avatar rounded-circle me-3" style="width: 60px; height: 60px;">
-                        <div>
-                            <h5>Nguyễn Đình Phong</h5>
-                            <p class="text-muted">46 bạn chung</p>
-                        </div>
-                    </div>
-                    <div class="friend-item d-flex align-items-center mt-3">
-                        <img src="/path/to/avatar3.jpg" alt="Friend 3" class="friend-avatar rounded-circle me-3" style="width: 60px; height: 60px;">
-                        <div>
-                            <h5>Thị Ni Lê</h5>
-                            <p class="text-muted">218 bạn chung</p>
-                        </div>
-                    </div>
-
                 </div>
             <?php
             } elseif ($activeTab == 'photos') {
@@ -240,7 +283,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             <?php
             } else if ($activeTab == 'posts') {
-                // Nội dung cho tab Posts
             ?>
                 <div class="container mt-3">
                     <div class="create-post-section">
@@ -250,18 +292,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                     </div>
                 </div>
-
-                <!-- Modal -->
                 <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <!-- Modal Header -->
                             <div class="modal-header">
                                 <h5 class="modal-title" id="createPostModalLabel">Tạo bài viết</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-
-                            <!-- Modal Body -->
                             <div class="modal-body">
                                 <div class="d-flex mb-3">
                                     <img src="<?php echo $avatarSrc; ?>" alt="User Avatar" style="width:50px; height:50px; border-radius:50%;">
@@ -274,8 +311,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 </div>
                                 <textarea class="form-control" rows="4" placeholder="Bạn đang nghĩ gì?"></textarea>
                             </div>
-
-                            <!-- Modal Footer -->
                             <div class="modal-footer">
                                 <div class="d-flex justify-content-between w-100">
                                     <div>
@@ -437,8 +472,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
                         </form>
                     </div>
-                    <!-- Modal Footer -->
-
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         <button type="submit" class="btn btn-primary" id="saveChanges" form="editProfileForm" name="EditProfile">Lưu thay đổi</button>

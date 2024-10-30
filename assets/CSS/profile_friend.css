@@ -1,0 +1,327 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+.profile-container {
+    max-width: 850px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+
+/* Cover Photo */
+.cover-photo {
+    width: 100%;
+    height: 250px;
+    background-color: #ddd;
+    position: relative;
+}
+
+.cover-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+/*avatar*/
+.avatar-profile {
+    position: absolute;
+    top: 170px;
+    left: 13%;
+    transform: translateX(-50%);
+    z-index: 2;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid white;
+}
+.avatar-profile img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* tên,chỉnh sửa trang cá nhân,bạn bè */
+.profile-info {
+    padding-top: 50px;
+    text-align: center;
+    background-color: #fff;
+    margin-bottom: 20px;
+}
+
+.user-details {
+    display: flex;
+    justify-content: space-between; /* Giữ khoảng cách giữa .user-info và .user-actions */
+    align-items: center; /* Căn giữa theo trục dọc */
+    padding: 20px 100px; /* Khoảng cách giữa các thành phần bên trong */
+    margin-top: -50px;
+}
+
+.user-info {
+    text-align: left;
+    margin-left: 80px; /* Dịch phần .user-info sang phải */
+}
+
+.user-info h2, .user-info p {
+    margin: 0;
+}
+
+.user-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto; /* Đẩy .user-actions sang bên phải */
+}
+
+.unfriend-btn, .message-friend-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    background-color: var(--primary-color);
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.unfriend-btn:hover, .message-friend-btn:hover {
+    background-color: var(--link-hover-color);
+}
+/* .add-friend-btn, .message-btn, .edit-information-btn {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+} */
+
+/* .add-friend-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.message-btn {
+    background-color: var(--secondary-color);
+    color: white;
+} */
+
+
+
+/* Navigation */
+.profile-nav {
+    margin: 20px 0;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background-color: #fff;
+}
+
+.profile-nav ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.profile-nav li {
+    margin: 0;
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    color: #65676b;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 15px 20px;
+    transition: color 0.3s, border-bottom 0.3s;
+}
+
+.nav-button:hover {
+    color: var(--link-hover-color);
+    background: #d1d3d5;
+}
+
+.nav-button.active {
+    color: var(--link-hover-color);
+    font-weight: bold;
+}
+
+/* Create Post Section */
+.create-post-section {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.create-post {
+    display: flex;
+    align-items: center;
+}
+
+.create-post .user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.create-post .post-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background-color: #f0f2f5;
+    cursor: pointer;
+}
+
+/* Avatar Upload Icon */
+.avatar-upload-icon {
+    position: absolute;
+    bottom: 20px;
+    right: 20px; 
+    cursor: pointer;
+    color: black;
+    transition: transform 0.3s ease, font-size 0.3s ease;
+}
+
+#confirm-button {
+    position: absolute;
+    bottom: 5px;
+    right: -80px; 
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+}
+
+#confirm-button:hover {
+    background-color: #0056b3;
+}
+
+#avatar-upload:valid + form #confirm-button {
+    display: inline-block;
+}
+
+/* Cover Upload Icon */
+.cover-upload-icon {
+    position: absolute; 
+    top: 10px; 
+    right: 10px;
+    cursor: pointer;
+}
+.profile-nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-nav ul li {
+    display: inline-block;
+}
+
+.nav-button {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+    cursor: pointer;
+    position: relative;
+}
+
+.nav-button {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+    cursor: pointer;
+    position: relative; /* Để tạo đường gạch dưới */
+}
+
+.nav-button:hover {
+    color: #333; /* Màu không thay đổi khi hover */
+    text-decoration: none; /* Không có gạch dưới khi hover */
+    border-radius: 10px; /* Bo tròn khi hover */
+
+}
+
+.nav-button.active {
+    color: var(--primary-color); /* Màu không thay đổi khi active */
+    text-decoration: none; /* Không có gạch dưới mặc định */
+
+}
+
+.nav-button.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color); /* Màu gạch dưới khi active */
+    transform: scaleX(1); /* Hiển thị đầy đủ gạch dưới khi active */
+    transition: transform 0.3s ease;
+}
+
+.nav-button:not(.active)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background-color: transparent; /* Không có gạch dưới nếu không active */
+    transform: scaleX(0); /* Ẩn gạch dưới nếu không active */
+    transition: transform 0.3s ease;
+}
+.content-section {
+    margin-left: 20px;
+    /* Lùi vào 20px từ cạnh trái */
+}
+/* Media Queries */
+@media (max-width: 600px) {
+    .profile-nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .avatar-profile {
+        top: 130px;
+        transform: none;
+        left: 50%;
+        margin-left: -75px;
+    }
+
+    .user-details {
+        padding-left: 0;
+        text-align: center;
+    }
+}
