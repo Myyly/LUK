@@ -236,12 +236,24 @@ class AccountData extends Database {
         return $row['total_friends'];
     }
     public function getFriendsList($userId) {
-        $query = "SELECT f.friend_id, u.full_name, u.profile_picture_url 
-                  FROM Friends f 
-                  JOIN Users u ON f.friend_id = u.user_id
-                  WHERE f.user_id = ? AND f.status = 'accepted'";
+        $query = "
+            SELECT 
+                CASE 
+                    WHEN f.user_id = ? THEN f.friend_id 
+                    ELSE f.user_id 
+                END AS friend_id, 
+                u.full_name, 
+                u.profile_picture_url 
+            FROM Friends f 
+            JOIN Users u ON (
+                (f.friend_id = u.user_id AND f.user_id = ?) OR 
+                (f.user_id = u.user_id AND f.friend_id = ?)
+            )
+            WHERE f.status = 'accepted'
+        ";
+    
         $stmt = $this->conn->getConnection()->prepare($query);
-        $stmt->bind_param("i", $userId);
+        $stmt->bind_param("iii", $userId, $userId, $userId);
         $stmt->execute();
         $result = $stmt->get_result();
         
@@ -252,6 +264,8 @@ class AccountData extends Database {
         
         return $friends;
     }
+    
+    
     public function unfriend($userId, $friendId) {
         $query = "DELETE FROM Friends WHERE user_id = ? AND friend_id = ?";
         $stmt = $this->conn->getConnection()->prepare($query);
@@ -284,8 +298,60 @@ class AccountData extends Database {
             return $count;
         } else {
             $stmt->close();
-            throw new Exception("Query execution failed: " . $stmt->error);
+            return 0; // Trả về 0 nếu không có kết quả nào
         }
     }
+    
+    public function checkFriendshipStatus($userId1, $userId2) {
+        $query = "SELECT status FROM Friends WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)";
+        $stmt = $this->conn->getConnection()->prepare($query);
+        
+        if (!$stmt) {
+            throw new Exception("Prepare statement failed: " . $this->conn->getConnection()->error);
+        }
+        
+        $stmt->bind_param("iiii", $userId1, $userId2, $userId2, $userId1);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return $row['status']; 
+        } else {
+            return null; 
+        }
+    }
+    public function acceptFriendRequest($userId, $friendId) {
+        $query = "UPDATE Friends SET status = 'accepted' WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)";
+        $stmt = $this->conn->getConnection()->prepare($query);
+        
+        if (!$stmt) {
+            throw new Exception("Prepare statement failed: " . $this->conn->getConnection()->error);
+        }
+        $stmt->bind_param("iiii", $userId, $friendId, $friendId, $userId);
+        if (!$stmt->execute()) {
+            throw new Exception("Execute failed: " . $stmt->error);
+        }
+        $stmt->close();
+        return true; 
+    }
+    public function addFriend($userId, $friendId) {
+        $requestedAt = date('Y-m-d H:i:s');
+        $query = "INSERT INTO Friends (user_id, friend_id, status, requested_at) VALUES (?, ?, 'accepted', ?)";
+        $stmt = $this->conn->getConnection()->prepare($query);
+        if (!$stmt) {
+            throw new Exception("Prepare statement failed: " . $this->conn->getConnection()->error);
+        }
+        $stmt->bind_param("iis", $userId, $friendId, $requestedAt);
+        if (!$stmt->execute()) {
+            throw new mysqli_sql_exception('Execute failed: ' . $stmt->error);
+        }
+    
+        $stmt->close();
+        return true; 
+    }
+    
+    
+    
 }
 ?>

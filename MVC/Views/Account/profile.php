@@ -10,7 +10,7 @@ $idUser = $_SESSION['idUser'];
 $user = $accountController->findUserbyId($idUser);
 $friendsList = $accountController->getFriendsList($idUser);
 $user->getProfile_picture_url();
-$activeTab = isset($_GET['sk']) ? $_GET['sk'] : '';
+$activeTab = isset($_GET['sk']) ? $_GET['sk'] : 'posts';
 $idUser = isset($_GET['id']) ? $_GET['id'] : '';
 //var_dump($user->getCover_photo_url()); 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -28,8 +28,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="/assets/CSS/variables.css">
     <link rel="stylesheet" href="/assets/CSS/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
 <style>
     /* Căn giữa tiêu đề */
@@ -111,14 +113,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $avatarSrc = 'data:image/jpeg;base64,' . $base64Image;
                     echo '<img id="avatar_img" class="avatar" src="' . $avatarSrc . '" alt="">';
                 } else {
-                    echo '<img id="avatar_img" class="avatar" src="/path/to/default-avatar.png" alt="">'; // Thay đường dẫn ảnh mặc định
+                    echo '<img id="avatar_img" class="avatar" src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360" alt="">'; // Thay đường dẫn ảnh mặc định
                 }
                 ?>
                 <label for="avatar-upload" class="avatar-upload-icon" data-bs-toggle="modal" data-bs-target="#avatarUploadModal">
                     <i class="fas fa-camera" style="font-size: 20px; color: black;"></i>
                 </label>
-
-
             </div>
             <div class="cover-upload">
                 <label for="cover-upload" class="cover-upload-icon" data-bs-toggle="modal" data-bs-target="#coverUploadModal">
@@ -133,7 +133,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $total_friends = $accountController->getTotalFriends($idUser);
                 ?>
                 <p><?php echo  $total_friends . " người bạn" ?></p>
-                <button class="edit-information-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">Chỉnh sửa trang cá nhân</button>
+                <button class="edit-information-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+    <i class="fa-solid fa-pen-to-square fa-rotate-270 fa-lg" style="color: #000000; margin-right: 8px;"></i>
+    Chỉnh sửa trang cá nhân
+</button>
+
             </div>
         </div>
         <div class="profile-nav">
@@ -142,7 +146,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <ul>
                     <li>
                         <button type="submit" name="sk" value="posts" class="nav-button <?php echo ($activeTab == 'posts') ? 'active' : ''; ?>">
-                            <i class="fas fa-th"></i> Bài viết
+                            <i class="fas fa-th"></i>
+                             Bài viết
                         </button>
                     </li>
                     <li>
@@ -205,6 +210,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         if ($friend_ava) {
                                             $base64Image = base64_encode($friend_ava);
                                             $friend_avaSrc = 'data:image/jpeg;base64,' . $base64Image;
+                                        }else {
+                                            $friend_avaSrc = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360";
                                         }
                                         ?>
                                         <a href="profile_friend.php?idFriend=<?php echo $friend['friend_id']; ?>">
@@ -228,7 +235,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <form method="POST" action="../../Process/profile_process.php">
                                         <input type="hidden" name="friend_id" value="<?php echo $friend['friend_id']; ?>">
                                         <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#unfriendModal_<?php echo $friend['friend_id']; ?>">
-                                            Hủy kết bạn
+                                            Hủy theo dõi
                                         </button>
                                         <!-- Modal -->
                                         <div class="modal fade" id="unfriendModal_<?php echo $friend['friend_id']; ?>" tabindex="-1" aria-labelledby="unfriendModalLabel_<?php echo $friend['friend_id']; ?>" aria-hidden="true">
@@ -236,12 +243,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="unfriendModalLabel">
-                                                            Hủy kết bạn với <?php echo htmlspecialchars($friend['full_name']); ?>
+                                                            Huỷ theo dõi <?php echo htmlspecialchars($friend['full_name']); ?>
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        Bạn có chắc chắn muốn hủy kết bạn với <?php echo htmlspecialchars($friend['full_name']); ?> không?
+                                                        Bạn có chắc chắn muốn hủy theo dõi với <?php echo htmlspecialchars($friend['full_name']); ?> không?
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -342,26 +349,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 </div>-
             <?php
-            } else {
+            }
             ?>
-                <div class="post">
-                    <div class="post-header">
-                        <img src="https://via.placeholder.com/50" alt="User Avatar">
-                        <div class="post-user">
-                            <p><strong>John Doe</strong></p>
-                            <p>1 hour ago</p>
-                        </div>
-                    </div>
-                    <div class="post-content">
-                        <p>This is an example post content just like Facebook.</p>
-                    </div>
-                    <div class="post-footer">
-                        <button><i class="fas fa-thumbs-up"></i> Like</button>
-                        <button><i class="fas fa-comment"></i> Comment</button>
-                        <button><i class="fas fa-share"></i> Share</button>
-                    </div>
-                </div>
-            <?php } ?>
+               
         </div>
         <!-- Modal để chỉnh sửa ảnh đại diện -->
         <div class="modal fade" id="avatarUploadModal" tabindex="-1" aria-labelledby="avatarUploadModalLabel" aria-hidden="true">

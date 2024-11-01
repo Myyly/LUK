@@ -8,7 +8,10 @@
     --sidebar-bg-color: #ffffff; /* Sidebar background */
     --shadow-color: rgba(0, 0, 0, 0.1); /* Shadow effect color */
     --nav-icons-hover-background :#e4e6eb;
-    --black : #070707;
+    --black : #000000;
+    --button-submit:#96969639;
+    --button-submit-hover:#969696ab;
+  
 }
 body {
     font-family: Arial, sans-serif;

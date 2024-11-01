@@ -74,8 +74,8 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--button-submit);
+    color: black;
     margin-top: 10px;
     position: absolute;
     top: 0;
@@ -84,7 +84,7 @@ body {
 }
 
 .edit-information-btn:hover {
-    background-color: var(--link-hover-color);
+    background-color: var(--button-submit-hover);
 }
 
 /* .add-friend-btn, .message-btn, .edit-information-btn {

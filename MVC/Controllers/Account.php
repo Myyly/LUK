@@ -48,5 +48,14 @@ public function unfriend($userId, $friendId) {
 public function getMutualFriendsCount($userId1, $userId2) {
     return $this->account->getMutualFriendsCount($userId1,$userId2);
 }
+public function checkFriendshipStatus($userId1, $userId2) {
+    return $this->account->checkFriendshipStatus($userId1, $userId2);
+}
+public function acceptFriendRequest($userId, $friendId) {
+    return $this->account->acceptFriendRequest($userId, $friendId);
+}
+public function addFriend($userId, $friendId) {
+    return $this->account->addFriend($userId, $friendId);
+}
 }
 ?>

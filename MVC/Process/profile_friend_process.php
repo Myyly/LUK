@@ -11,11 +11,23 @@ $idFriends = isset($_GET['idFriend']) ? $_GET['idFriend'] : '';
 
 $user = $accountController->findUserbyId($idUser);
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["Unfriend"])) {}
+    if (isset($_POST["Unfriend"])) {
         $accountController->unfriend($idUser, $_POST["friend_id"]); 
+        $_SESSION['unfriended'] = true; 
         echo '<script>';
         echo 'setTimeout(function() {';
-        echo '    window.location.href = "/MVC/Views/Account/profile_friend.php?idFriend=' . $_POST["friend_id"] . '";'; // Sửa lỗi ở đây
+        echo '    window.location.href = "/MVC/Views/Account/profile_friend.php?idFriend=' . $_POST["friend_id"] . '";'; 
         echo '}, 300);';
         echo '</script>';
     }
+    elseif (isset($_POST["addFriend"])) {
+        $accountController->addFriend($idUser, $_POST["friend_id"]); 
+        echo '<script>';
+        echo 'setTimeout(function() {';
+        echo '    window.location.href = "/MVC/Views/Account/profile_friend.php?idFriend=' . $_POST["friend_id"] . '";'; 
+        echo '}, 300);';
+        echo '</script>';
+    }
+    
+}
+?>
