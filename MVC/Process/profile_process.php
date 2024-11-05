@@ -135,6 +135,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=friends_all";';
         echo '}, 300);';
         echo '</script>';
-        }
+    }
+    if (isset($_POST["saveBio"])) {
+        
+    }
+    
+    
 }
 ?>

@@ -350,7 +350,41 @@ class AccountData extends Database {
         $stmt->close();
         return true; 
     }
+    public function searchFriendsByFullName($idUser, $fullName) {
+        // Chuẩn bị câu truy vấn
+        $query = "SELECT user_id AS friend_id, full_name, profile_picture_url 
+                  FROM Users 
+                  WHERE full_name LIKE ? AND user_id != ?";
+        
+        // Chuẩn bị câu lệnh truy vấn
+        $stmt = $this->conn->getConnection()->prepare($query);
     
+        // Kiểm tra lỗi khi chuẩn bị câu truy vấn
+        if (!$stmt) {
+            throw new Exception("Lỗi chuẩn bị câu truy vấn: " . $this->conn->getConnection()->error);
+        }
+    
+        // Tạo chuỗi tìm kiếm với ký tự wildcard
+        $likeFullName = "%" . $fullName . "%";
+    
+        // Gán giá trị cho các tham số
+        $stmt->bind_param("si", $likeFullName, $idUser);
+    
+        // Thực thi câu truy vấn
+        $stmt->execute();
+    
+        // Lấy kết quả
+        $result = $stmt->get_result();
+    
+        // Tạo danh sách bạn bè từ kết quả truy vấn
+        $friends = [];
+        while ($row = $result->fetch_assoc()) {
+            $friends[] = $row;
+        }
+            $stmt->close();
+    
+        return $friends;
+    }
     
     
 }

@@ -57,5 +57,9 @@ public function acceptFriendRequest($userId, $friendId) {
 public function addFriend($userId, $friendId) {
     return $this->account->addFriend($userId, $friendId);
 }
+public function searchFriendsByFullName($idUser, $fullName) {
+    return $this->account->searchFriendsByFullName($idUser, $fullName);
 }
+}
+
 ?>

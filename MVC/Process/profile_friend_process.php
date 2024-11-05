@@ -28,6 +28,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo '}, 300);';
         echo '</script>';
     }
+    elseif (isset($_POST["Follow"])) {
+        // $idFriend = $_POST["friend_id"];
+        $friend_id_be = $_POST["friend_id_be"];
+        $accountController->addFriend($idUser, $_POST["friend_id"]); 
+        echo '<script>';
+        echo 'setTimeout(function() {';
+        echo '    window.location.href = "/MVC/Views/Account/profile_friend.php?idFriend=' . $friend_id_be . '&sk=friends_all";'; 
+        echo '}, 0);';
+        echo '</script>';
+    }
+    elseif (isset($_POST["Unfriend_list"])) {
+        $friend_id_be = $_POST["friend_id_be"];
+        $accountController->unfriend($idUser, $_POST["friend_id"]); 
+        echo '<script>';
+        echo 'setTimeout(function() {';
+        echo '    window.location.href = "/MVC/Views/Account/profile_friend.php?idFriend=' . $friend_id_be  . '&sk=friends_all";'; 
+        echo '}, 0);';
+        echo '</script>';
+    }
     
 }
 ?>

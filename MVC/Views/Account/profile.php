@@ -13,8 +13,6 @@ $user->getProfile_picture_url();
 $activeTab = isset($_GET['sk']) ? $_GET['sk'] : 'posts';
 $idUser = isset($_GET['id']) ? $_GET['id'] : '';
 //var_dump($user->getCover_photo_url()); 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-}
 
 ?>
 <!DOCTYPE html>
@@ -28,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="/assets/CSS/variables.css">
     <link rel="stylesheet" href="/assets/CSS/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -178,10 +177,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($activeTab == 'friends' || $activeTab == 'friends_all') {
             ?>
                 <div class="friends-section">
-                    <h3>Bạn bè</h3>
-                    <div class="search-friends">
-                        <input type="text" class="form-control" placeholder="Tìm kiếm bạn bè">
-                    </div>
+                <h3>Bạn bè</h3>
+                <div class="search-friends">
+    <input type="text" class="form-control" id="friendSearch" placeholder="Tìm kiếm bạn bè">
+</div>
+  
+                    </form>
                     <form method="GET" action="">
                         <input type="hidden" name="id" value="<?php echo $idUser; ?>">
                         <div class="friends-filter mt-3">
@@ -235,7 +236,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <form method="POST" action="../../Process/profile_process.php">
                                         <input type="hidden" name="friend_id" value="<?php echo $friend['friend_id']; ?>">
                                         <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#unfriendModal_<?php echo $friend['friend_id']; ?>">
-                                            Hủy theo dõi
+                                        <i class="fa-solid fa-check" style="color: #ffffff;"></i>
+                                                Đang theo dõi
                                         </button>
                                         <!-- Modal -->
                                         <div class="modal fade" id="unfriendModal_<?php echo $friend['friend_id']; ?>" tabindex="-1" aria-labelledby="unfriendModalLabel_<?php echo $friend['friend_id']; ?>" aria-hidden="true">
@@ -285,8 +287,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } elseif ($activeTab == 'about') {
             ?>
                 <div class="about-section">
-                    <h3>About</h3>
-                    <p>This is the About section. Here you can add more information about yourself.</p>
+                <?php include 'profile_about.php'; ?>
                 </div>
             <?php
             } else if ($activeTab == 'posts') {
@@ -525,17 +526,84 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             reader.readAsDataURL(file); // Read the file and trigger onload function
         }
     }
-    // function previewImage(event, isCover = false) {
-    //     const file = event.target.files[0]; // Lấy tệp được chọn
-    //     const image = isCover ? document.querySelector('#cover_img') : document.querySelector('#avatar_img');
-    //     const confirmButton = isCover ? document.getElementById('cover-confirm-button') : document.getElementById('confirm-button'); // Lấy nút xác nhận tương ứng
+    //const originalFriendsList = <?php echo json_encode($friendsList ? $friendsList : []); ?>; // Gán giá trị mặc định là mảng rỗng nếu không có bạn bè
 
-    //     if (file) {
-    //         image.src = URL.createObjectURL(file); // Hiển thị ảnh xem trước
-    //         confirmButton.style.display = 'block'; // Hiện nút xác nhận
-    //     } else {
-    //         alert("Vui lòng chọn một tệp ảnh."); // Thông báo nếu không có tệp nào được chọn
-    //         confirmButton.style.display = 'none'; // Ẩn nút xác nhận nếu không có tệp
-    //     }
-    // }
+document.getElementById("friendSearch").addEventListener("input", function() {
+    const keyword = this.value;
+    const idUser = <?php echo json_encode($idUser); ?>; // ID người dùng hiện tại
+    const friendsListContainer = document.querySelector(".friends-list .row");
+
+    if (keyword.trim() !== "") {
+        // Gửi AJAX request đến server để tìm kiếm bạn bè theo từ khóa
+        fetch("../../Process/search_friends.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ idUser: idUser, keyword: keyword })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Xóa danh sách bạn bè hiện tại
+            friendsListContainer.innerHTML = "";
+
+            // Thêm kết quả tìm kiếm vào danh sách bạn bè
+            data.forEach(friend => {
+                const friendHTML = `
+                    <div class="col-md-6 mb-3">
+                        <div class="friend-item d-flex align-items-center justify-content-between p-2 border rounded">
+                            <div class="d-flex align-items-center">
+                                <a href="profile_friend.php?idFriend=${friend.friend_id}">
+                                    <img src="${friend.profile_picture_url ? `data:image/jpeg;base64,${friend.profile_picture_url}` : 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360'}"
+                                         alt="${friend.full_name}"
+                                         class="friend-avatar rounded-circle me-3"
+                                         style="width: 60px; height: 60px;">
+                                </a>
+                                <div>
+                                    <h5 class="mb-0">${friend.full_name}</h5>
+                                    <p class="text-muted mb-0">${friend.mutual_friends_count > 0 ? friend.mutual_friends_count + " bạn chung" : ""}</p>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#unfriendModal_${friend.friend_id}">
+                                <i class="fa-solid fa-check" style="color: #ffffff;"></i> Đang theo dõi
+                            </button>
+                        </div>
+                    </div>
+                `;
+                friendsListContainer.insertAdjacentHTML("beforeend", friendHTML);
+            });
+        })
+        .catch(error => console.error("Error:", error));
+    } else {
+        // Nếu không có từ khóa, lấy lại danh sách bạn bè gốc
+        friendsListContainer.innerHTML = ""; // Xóa danh sách bạn bè hiện tại
+        
+        // Thêm danh sách bạn bè gốc
+        originalFriendsList.forEach(friend => {
+            const friendHTML = `
+                <div class="col-md-6 mb-3">
+                    <div class="friend-item d-flex align-items-center justify-content-between p-2 border rounded">
+                        <div class="d-flex align-items-center">
+                            <a href="profile_friend.php?idFriend=${friend.friend_id}">
+                                <img src="${friend.profile_picture_url ? `data:image/jpeg;base64,${friend.profile_picture_url}` : 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360'}"
+                                     alt="${friend.full_name}"
+                                     class="friend-avatar rounded-circle me-3"
+                                     style="width: 60px; height: 60px;">
+                            </a>
+                            <div>
+                                <h5 class="mb-0">${friend.full_name}</h5>
+                                <p class="text-muted mb-0">${friend.mutual_friends_count > 0 ? friend.mutual_friends_count + " bạn chung" : ""}</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#unfriendModal_${friend.friend_id}">
+                            <i class="fa-solid fa-check" style="color: #ffffff;"></i> Đang theo dõi
+                        </button>
+                    </div>
+                </div>
+            `;
+            friendsListContainer.insertAdjacentHTML("beforeend", friendHTML);
+        });
+    }
+});
+
 </script>

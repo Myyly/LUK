@@ -30,6 +30,8 @@ $friendsList = $accountController->getFriendsList($idFriend);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <style>
 </style>
@@ -83,13 +85,20 @@ $friendsList = $accountController->getFriendsList($idFriend);
                         if ($status == null):
                         ?>
                             <input type="hidden" name="friend_id" value="<?php echo $idFriend; ?>">
-                            <button type="submit" class="add-friend-btn" name="addFriend">Theo dõi</button>
-                            <button class="message-friend-btn-new" type="submit" name="message">Nhắn tin</button>
+                            <button type="submit" class="add-friend-btn" name="addFriend">
+                            <i class="fa-solid fa-plus fa-lg" style="color: #ffffff;margin-right: 8px;"></i>
+                                Theo dõi</button>
+                            <button class="message-friend-btn-new" type="submit" name="message">
+                            <i class="fa-solid fa-comment-dots fa-lg" style="color: #000000;;margin-right: 8px;"></i>
+                                Nhắn tin</button>
                         <?php else: ?>
                             <button type="button" class="unfriend-btn" data-bs-toggle="modal" data-bs-target="#unfriendModal">
-                                Hủy theo dõi
+                            <i class="fa-solid fa-check fa-lg" style="color: #000000;margin-right: 8px"></i>
+                            Đang theo dõi
                             </button>
-                            <button class="message-friend-btn" type="submit" name="message">Nhắn tin</button>
+                            <button class="message-friend-btn" type="submit" name="message">
+                            <i class="fa-solid fa-comment-dots fa-lg" style="color: #ffffff;margin-right: 8px;"></i>
+                                Nhắn tin</button>
                         <?php endif; ?>
                     </form>
                 </div>
@@ -155,7 +164,7 @@ $friendsList = $accountController->getFriendsList($idFriend);
             }
             if ($activeTab == 'friends_all') {
             ?>
- <div class="friends-list mt-4">
+                <div class="friends-list mt-4">
                     <h4>Danh sách bạn bè</h4>
                     <div class="row">
                         <?php foreach ($friendsList as $friend): ?>
@@ -166,19 +175,30 @@ $friendsList = $accountController->getFriendsList($idFriend);
                                         if ($friend_ava) {
                                             $base64Image = base64_encode($friend_ava);
                                             $friend_avaSrc = 'data:image/jpeg;base64,' . $base64Image;
-                                        }else {
+                                        } else {
                                             $friend_avaSrc = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360";
                                         }
                                         ?>
-                                        <a href="profile_friend.php?idFriend=<?php echo $friend['friend_id']; ?>">
-                                            <img src="<?php echo $friend_avaSrc ?>"
-                                                alt="<?php echo htmlspecialchars($friend['full_name']); ?>"
-                                                class="friend-avatar rounded-circle me-3"
-                                                style="width: 60px; height: 60px;">
-                                        </a>
+                                        <?php if ($friend['friend_id'] == $idUser): ?>
+                                            <a href="profile.php?id=<?php echo $idFriend ?>">
+                                                <img src="<?php echo $friend_avaSrc ?>"
+                                                    alt="<?php echo htmlspecialchars($friend['full_name']); ?>"
+                                                    class="friend-avatar rounded-circle me-3"
+                                                    style="width: 60px; height: 60px;">
+                                            </a>
+                                        <?php else: ?>
+                                            <a href="profile_friend.php?idFriend=<?php echo $friend['friend_id']; ?>">
+                                                <img src="<?php echo $friend_avaSrc ?>"
+                                                    alt="<?php echo htmlspecialchars($friend['full_name']); ?>"
+                                                    class="friend-avatar rounded-circle me-3"
+                                                    style="width: 60px; height: 60px;">
+                                            </a>
+                                        <?php endif; ?>
                                         <div>
                                             <h5 class="mb-0"><?php echo htmlspecialchars($friend['full_name']); ?></h5>
+                                            
                                             <?php
+                                            if($idUser != $friend['friend_id']):
                                             $MutualFriendsCount = $accountController->getMutualFriendsCount($idUser, $friend['friend_id']);
                                             ?>
                                             <p class="text-muted mb-0"><?php
@@ -186,13 +206,28 @@ $friendsList = $accountController->getFriendsList($idFriend);
                                                                             echo $MutualFriendsCount . " bạn chung";
                                                                         }
                                                                         ?></p>
+                                            <?php else:?>
+                                                <?php endif; ?>
                                         </div>
                                     </div>
-                                    <form method="POST" action="../../Process/profile_process.php">
+                                    <form method="POST" action="../../Process/profile_friend_process.php">
                                         <input type="hidden" name="friend_id" value="<?php echo $friend['friend_id']; ?>">
-                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#unfriendModal_<?php echo $friend['friend_id']; ?>">
-                                            Hủy theo dõi
-                                        </button>
+                                        <input type="hidden" name="friend_id_be" value="<?php echo $idFriend ; ?>">
+                                        <?php
+                                        $status = $accountController->checkFriendshipStatus($idUser, $friend['friend_id']);
+                                        if ($friend['friend_id'] == $idUser): ?>
+                                        <?php elseif ($status === null): ?>
+                                            <button type="submit" class="btn btn-danger btn-sm" name="Follow">
+                                            <i class="fa-solid fa-plus" style="color: #ffffff;"></i>
+                                                Theo dõi
+                                            </button>
+                                        <?php elseif ($status === "accepted"): ?>
+                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#unfriendModal_<?php echo $friend['friend_id']; ?>">
+                                            <i class="fa-solid fa-check" style="color: #ffffff;"></i>
+                                                Đang theo dõi
+                                            </button>
+                                        <?php endif; ?>
+
                                         <!-- Modal -->
                                         <div class="modal fade" id="unfriendModal_<?php echo $friend['friend_id']; ?>" tabindex="-1" aria-labelledby="unfriendModalLabel_<?php echo $friend['friend_id']; ?>" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -208,11 +243,9 @@ $friendsList = $accountController->getFriendsList($idFriend);
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                                        <!-- Form submit -->
-                                                        <form method="POST" action="../../Process/profile_process.php">
                                                             <input type="hidden" name="friend_id" value="<?php echo $friend['friend_id']; ?>">
-                                                            <button type="submit" class="btn btn-danger" name="Unfriend">Xác nhận</button>
-                                                        </form>
+                                                            <input type="hidden" name="friend_id_be" value="<?php echo $idFriend ; ?>">
+                                                            <button type="submit" class="btn btn-danger" name="Unfriend_list">Xác nhận</button>
                                                     </div>
                                                 </div>
                                             </div>
