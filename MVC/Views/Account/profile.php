@@ -39,8 +39,7 @@ $idUser = isset($_GET['id']) ? $_GET['id'] : '';
         justify-content: center;
         /* Căn giữa theo chiều ngang */
         align-items: center;
-        /* Căn giữa theo chiều dọc */
-        text-align: center;
+                text-align: center;
     }
 
     .modal-title {

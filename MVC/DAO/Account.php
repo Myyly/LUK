@@ -385,7 +385,5 @@ class AccountData extends Database {
     
         return $friends;
     }
-    
-    
 }
 ?>

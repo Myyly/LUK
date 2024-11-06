@@ -2,12 +2,16 @@
 // MVC/Controllers/Account.php
 
 require_once __DIR__ . '/../DAO/Account.php';
+require_once __DIR__ . '/../DAO/Profile.php';
+
 
 class AccountController {
     private $account;
+    private $profile;
 
     public function __construct() {
         $this->account = new AccountData();
+        $this->profile = new ProfileData();
     }
     public function SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url){
         return $this->account->SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url);
@@ -59,6 +63,9 @@ public function addFriend($userId, $friendId) {
 }
 public function searchFriendsByFullName($idUser, $fullName) {
     return $this->account->searchFriendsByFullName($idUser, $fullName);
+}
+public function updateUserInfo($userId, $bio, $phoneNumber, $email, $gender, $dateOfBirth) {
+    return $this->profile->updateUserInfo($userId, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
 }
 }
 

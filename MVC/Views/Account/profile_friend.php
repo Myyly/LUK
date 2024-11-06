@@ -274,9 +274,8 @@ $friendsList = $accountController->getFriendsList($idFriend);
             } elseif ($activeTab == 'about') {
             ?>
                 <div class="about-section">
-                    <h3>About</h3>
-                    <p>This is the About section. Here you can add more information about yourself.</p>
-                </div>
+                <?php include 'profile_friend_about.php'; ?>
+            </div>
             <?php
             } else if ($activeTab == 'posts') {
             ?>

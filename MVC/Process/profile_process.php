@@ -129,17 +129,61 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     if (isset($_POST["Unfriend"])) {
         $friend_id = $_POST["friend_id"];
-        $accountController->unfriend($idUser, $friend_id); 
+        $accountController->unfriend($idUser, $friend_id);
         echo '<script>';
         echo 'setTimeout(function() {';
         echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=friends_all";';
         echo '}, 300);';
         echo '</script>';
     }
-    if (isset($_POST["saveBio"])) {
-        
+    if (isset($_POST["saveBio"]) ) {
+        $bio = $_POST["bioTextArea"];
+        echo $bio;
+        $phoneNumber = $user->getPhone_numberl();
+        $email = $user->getEmail();
+        $gender = $user->getGender();
+        $dateOfBirth = $user->getDate_of_birth();
+        $accountController->updateUserInfo($idUser, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
+        echo '<script>';
+        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=about";';
+        echo '</script>'; 
     }
-    
-    
+    if (isset($_POST["savePhone"]) ) {
+        $bio = $user->getBio();
+        $phoneNumber =$_POST["phone"];
+        $email = $user->getEmail();
+        $gender = $user->getGender();
+        $dateOfBirth = $user->getDate_of_birth();
+        $accountController->updateUserInfo($idUser, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
+        echo '<script>';
+        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=about";';
+        echo '</script>'; 
+    }
+    if (isset($_POST["saveGender"]) ) {
+        $bio = $user->getBio();
+        $phoneNumber =$user->getPhone_numberl();
+        $email = $user->getEmail();
+        $gender = $_POST["genderSelect"];
+        $dateOfBirth = $user->getDate_of_birth();
+        $accountController->updateUserInfo($idUser, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
+        echo '<script>';
+        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=about";';
+        echo '</script>'; 
+    }
+    if (isset($_POST["saveDate"]) ) {
+        $bio = $user->getBio();
+        $phoneNumber =$user->getPhone_numberl();
+        $email = $user->getEmail();
+        $gender = $user->getGender();
+        $dateOfBirth =$_POST["dob"];
+        $accountController->updateUserInfo($idUser, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
+        echo '<script>';
+        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=about";';
+        echo '</script>'; 
+    }
+    if (isset($_POST["cancelBio"]) ||isset($_POST["cancelPhoneButton"]) ||isset($_POST["cancelGenderButton"])||isset($_POST["cancelDateButton"])) {
+        echo '<script>';
+        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=about";';
+        echo '</script>'; 
+        }
 }
-?>
