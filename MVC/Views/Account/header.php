@@ -14,7 +14,7 @@ $user = $accountController->findUserbyId($idUser);
         <a href="/index.php"><img src="/assets/images/LuxLogo.png" alt="Logo"></a>
     </div>
     <div class="search">
-        <input type="text" placeholder="Tìm kiếm trên Facebook">
+        <input type="text" placeholder="Tìm kiếm trên Luk">
         <i class="fas fa-search"></i>
     </div>
     <div class="nav-icons">

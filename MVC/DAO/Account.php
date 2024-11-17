@@ -78,7 +78,8 @@ class AccountData extends Database {
                 $row['updated_at'],
                 $row['last_active'],
                 $row['status'],
-                $row['cover_photo_url']
+                $row['cover_photo_url'],
+                $row['signup_type']
             );
             $stmt->close();
             return $user;
@@ -112,7 +113,8 @@ class AccountData extends Database {
                 $row['updated_at'],
                 $row['last_active'],
                 $row['status'],
-                $row['cover_photo_url']
+                $row['cover_photo_url'],
+                $row['signup_type']
 
             );
             $stmt->close();
@@ -161,8 +163,8 @@ class AccountData extends Database {
                 $row['updated_at'],
                 $row['last_active'],
                 $row['status'],
-                $row['cover_photo_url']
-
+                $row['cover_photo_url'],
+                $row['signup_type']
             );
             $stmt->close();
             return $user;

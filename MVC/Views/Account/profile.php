@@ -291,63 +291,8 @@ $idUser = isset($_GET['id']) ? $_GET['id'] : '';
             <?php
             } else if ($activeTab == 'posts') {
             ?>
-                <div class="container mt-3">
-                    <div class="create-post-section">
-                        <div class="create-post">
-                            <img src="<?php echo $avatarSrc; ?>" alt="User Avatar" class="user-avatar">
-                            <input type="text" placeholder="Bạn đang nghĩ gì?" class="post-input" data-bs-toggle="modal" data-bs-target="#createPostModal">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="createPostModalLabel">Tạo bài viết</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="d-flex mb-3">
-                                    <img src="<?php echo $avatarSrc; ?>" alt="User Avatar" style="width:50px; height:50px; border-radius:50%;">
-                                    <div class="ms-3">
-                                        <h6>Mỹ Ly</h6>
-                                        <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Công khai
-                                        </button>
-                                    </div>
-                                </div>
-                                <textarea class="form-control" rows="4" placeholder="Bạn đang nghĩ gì?"></textarea>
-                            </div>
-                            <div class="modal-footer">
-                                <div class="d-flex justify-content-between w-100">
-                                    <div>
-                                        <button class="btn btn-light"><i class="fas fa-photo-video"></i> Ảnh/Video</button>
-                                        <button class="btn btn-light"><i class="fas fa-smile"></i> Cảm xúc</button>
-                                        <button class="btn btn-light"><i class="fas fa-location-arrow"></i> Địa điểm</button>
-                                    </div>
-                                    <button class="btn btn-primary">Đăng</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="post">
-                    <div class="post-header">
-                        <img src="https://via.placeholder.com/50" alt="User Avatar">
-                        <div class="post-user">
-                            <p><strong>John Doe</strong></p>
-                            <p>1 hour ago</p>
-                        </div>
-                    </div>
-                    <div class="post-content">
-                        <p>This is an example post content just like Facebook.</p>
-                    </div>
-                    <div class="post-footer">
-                        <button><i class="fas fa-thumbs-up"></i> Thích</button>
-                        <button><i class="fas fa-comment"></i> Bình luận</button>
-                        <button><i class="fas fa-share"></i> Chia sẻ</button>
-                    </div>
-                </div>-
+             <?php include 'profile_post.php'; ?>
+               
             <?php
             }
             ?>

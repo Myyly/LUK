@@ -259,7 +259,15 @@
         .delete-comment i:hover{
             color: red;
             }
-      
+      /* Đặt z-index cho nested modals */
+.modal-backdrop.show + .modal {
+    z-index: 1056; /* Modal thứ hai */
+}
+
+.modal-backdrop.show + .modal + .modal-backdrop {
+    z-index: 1055; /* Backdrop của modal thứ hai */
+}
+
 </style>
 <div class="modal fade" id="detailCommentModal_<?php echo $post->getPost_id(); ?>" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -377,10 +385,16 @@
 
                     <?php if ($userIdComment == $idUser): ?>
                                <input type="hidden" name="comment_id" value="<?php echo $comment->getComment_id(); ?>">
-                               <button data-bs-toggle="modal" data-bs-target="#deleteCommentModal">
-                               <i class="fa-solid fa-circle-minus" ></i>
-                                </button>
+                               <button class="delete-comment" type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteComment_<?php echo $comment->getComment_id(); ?>">
+                                <i class="fa-solid fa-circle-minus"></i>
+                            </button>
                         <?php  endif; ?>
+
+        
+
+
                 </div>
             <?php endforeach; ?>
             <div class="modal-footer">
@@ -399,7 +413,6 @@
         </div>
     </div>
 </div>
-
 <!-- </form> -->
 <script>
     function addComment(postId) {
@@ -444,4 +457,5 @@
 
         xhr.send("postId=" + postId + "&isLiked=" + isLiked);
     }
+    
 </script>

@@ -52,6 +52,7 @@ $idUser = isset($_GET['id']) ? $_GET['id'] : '';
             font-weight: bold;
             color: #333;
         }
+
         .intro-edit-buttons {
             display: flex;
             align-items: center;
@@ -216,11 +217,12 @@ $idUser = isset($_GET['id']) ? $_GET['id'] : '';
             margin-right: -90px;
             margin-bottom: 10px;
         }
+
         .text-muted {
-    font-size: 12px;
-    margin-top: 6px;
-    margin-left: 33px;
-    }
+            font-size: 12px;
+            margin-top: 6px;
+            margin-left: 33px;
+        }
     </style>
 </head>
 
@@ -245,8 +247,8 @@ $idUser = isset($_GET['id']) ? $_GET['id'] : '';
                             </div>
                         </div>
                         <div id="bioInputBox" style="display: none;">
-                        <textarea id="bioTextArea" placeholder="Nhập tiểu sử của bạn..." name="bioTextArea"><?php echo htmlspecialchars($bio); ?></textarea>
-                        <button type="submit" id="saveBioButton" name="saveBio">Lưu</button>
+                            <textarea id="bioTextArea" placeholder="Nhập tiểu sử của bạn..." name="bioTextArea"><?php echo htmlspecialchars($bio); ?></textarea>
+                            <button type="submit" id="saveBioButton" name="saveBio">Lưu</button>
                             <button type="submit" id="cancelBioButton" name="cancelBio">Huỷ</button>
                         </div>
                     <?php
@@ -257,35 +259,40 @@ $idUser = isset($_GET['id']) ? $_GET['id'] : '';
                             Thêm tiểu sử
                         </button>
                         <div id="bioInputBox" style="display: none;">
-                            <textarea id="bioTextArea" placeholder="Nhập tiểu sử của bạn..."name="bioTextArea"></textarea>
+                            <textarea id="bioTextArea" placeholder="Nhập tiểu sử của bạn..." name="bioTextArea"></textarea>
                             <button type="submit" id="saveBioButton" name="saveBio">Lưu</button>
-                            <button type="submit" id="cancelBioButton"name="cancelBio">Huỷ</button>
+                            <button type="submit" id="cancelBioButton" name="cancelBio">Huỷ</button>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
+            <?php $method = $user->getSignup_type(); ?>
             <!-- Mobile -->
             <div class="intro-item">
                 <div>
                     <?php
                     $phone = $user->getPhone_numberl();
+                    $registrationMethod = $user->getSignup_type(); 
                     if ($phone != null):
                     ?>
                         <div id="mobileDisplay">
                             <i class="fas fa-phone" style="color: var(--primary-color);" id="ed_phone"></i>
                             <span class="intro-text"><?php echo $phone; ?></span>
                             <p class="text-muted">Mobile</p>
-                            <div class="intro-edit-buttons" style="position: relative;">
-                                <i class="fas fa-globe" style="position: absolute; top: -35px; left: 395px; color: #007bff;"></i>
-                                <button type="button" name="editPhone" id="editPhone">
-                                    <i class="fa-solid fa-pen-to-square fa-lg" style="color: #525252;position: absolute; top: -30px; left: 445px;"></i>
-                                </button>
-                            </div>
+                            <?php if ($registrationMethod !== 'phone'): 
+                            ?>
+                                <div class="intro-edit-buttons" style="position: relative;">
+                                    <i class="fas fa-globe" style="position: absolute; top: -35px; left: 395px; color: #007bff;"></i>
+                                    <button type="button" name="editPhone" id="editPhone">
+                                        <i class="fa-solid fa-pen-to-square fa-lg" style="color: #525252;position: absolute; top: -30px; left: 445px;"></i>
+                                    </button>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div id="inputPhone" style="display: none;">
-                            <input type="text" class="phone-input" id="phone" name="phone" value="<?php echo $phone?>">
+                            <input type="text" class="phone-input" id="phone" name="phone" value="<?php echo $phone ?>">
                             <button type="submit" id="savePhoneButton" name="savePhone">Lưu</button>
-                            <button type="submit" id="cancelPhoneButton" name="cancelPhoneButton"style="background-color: var(--button-submit-hover);">Huỷ</button>
+                            <button type="submit" id="cancelPhoneButton" name="cancelPhoneButton" style="background-color: var(--button-submit-hover);">Huỷ</button>
                         </div>
                     <?php else: ?>
                         <button type="button" id="addPhone">
@@ -295,35 +302,40 @@ $idUser = isset($_GET['id']) ? $_GET['id'] : '';
                         <div id="inputPhone" style="display: none;">
                             <input type="text" class="phone-input" id="phone" name="phone" placeholder="Nhập số điện thoại">
                             <button type="submit" id="savePhoneButton" name="savePhone">Lưu</button>
-                            <button type="submit" id="cancelPhoneButton" name="cancelPhoneButton"style="background-color: var(--button-submit-hover);">Huỷ</button>
+                            <button type="submit" id="cancelPhoneButton" name="cancelPhoneButton" style="background-color: var(--button-submit-hover);">Huỷ</button>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
+
             <!-- Email -->
             <div class="intro-item">
-                <div>
-                    <?php
-                    $email = $user->getEmail();
-                    if ($email != null):
-                    ?>
-                        <i class="fas fa-envelope" style="color: var(--primary-color);"></i>
-                        <span class="intro-text"><?php echo $email ?></span>
-                        <p class="text-muted">Email</p>
-                        <div class="intro-edit-buttons" style="position: relative;">
-                            <i class="fas fa-globe" style="position: absolute; top: -35px; left: 400px; color: #007bff;"></i>
-                            <button type="submit" name="">
-                                <i class="fa-solid fa-pen-to-square fa-lg" style="color: #525252;position: absolute; top: -30px; left: 445px;"></i>
-                            </button>
-                        </div>
-                    <?php else: ?>
-                        <button>
-                            <i class="fas fa-plus-circle" style="color: var(--primary-color);"></i>
-                            Thêm email
-                        </button>
-                    <?php endif; ?>
+    <div>
+        <?php
+        $registrationMethod = $user->getSignup_type(); // Get registration type (phone/email)
+        $email = $user->getEmail(); // Get user's email
+        if ($email != null):
+        ?>
+            <i class="fas fa-envelope" style="color: var(--primary-color);"></i>
+            <span class="intro-text"><?php echo $email; ?></span>
+            <p class="text-muted">Email</p>
+            <?php if ($registrationMethod !== 'email'): // Hide the edit button if signup_type is 'email' ?>
+                <div class="intro-edit-buttons" style="position: relative;">
+                    <i class="fas fa-globe" style="position: absolute; top: -35px; left: 400px; color: #007bff;"></i>
+                    <button type="submit" name="">
+                        <i class="fa-solid fa-pen-to-square fa-lg" style="color: #525252;position: absolute; top: -30px; left: 445px;"></i>
+                    </button>
                 </div>
-            </div>
+            <?php endif; ?>
+        <?php else: ?>
+            <button>
+                <i class="fas fa-plus-circle" style="color: var(--primary-color);"></i>
+                Thêm email
+            </button>
+        <?php endif; ?>
+    </div>
+</div>
+
             <!-- Gender -->
             <div class="intro-item">
                 <div id="genderDisplay">
@@ -365,7 +377,7 @@ $idUser = isset($_GET['id']) ? $_GET['id'] : '';
                         <label for="dob">Ngày tháng năm sinh:</label>
                         <input type="date" id="dob" name="dob" class="date-input" required value="<?php echo $date_of_birth; ?>">
                         <button type="submit" id="saveDateButton" name="saveDate">Lưu</button>
-                        <button type="submit" id="cancelDateButton" name="cancelDateButton"style=" background-color: var(--button-submit-hover);">Huỷ</button>
+                        <button type="submit" id="cancelDateButton" name="cancelDateButton" style=" background-color: var(--button-submit-hover);">Huỷ</button>
                     </div>
                 </div>
             </div>

@@ -67,6 +67,39 @@ public function searchFriendsByFullName($idUser, $fullName) {
 public function updateUserInfo($userId, $bio, $phoneNumber, $email, $gender, $dateOfBirth) {
     return $this->profile->updateUserInfo($userId, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
 }
+public function CreatePost($user_id, $content, $created_at, $emotion_id) {
+    return $this->profile->CreatePost($user_id, $content, $created_at, $emotion_id);
 }
-
+public function getAllPostsOfUser($user_id){
+    return $this->profile->getAllPostsOfUser($user_id);
+}
+public function AddPostImage($post_id, $image_data)
+{
+    return $this->profile->AddPostImage($post_id, $image_data);
+}
+public function getAllImagesOfPost($post_id){
+    return $this->profile->getAllImagesOfPost($post_id);
+}
+public function getImagesById($image_id){
+    return $this->profile->getImagesById($image_id);
+}
+public function getPostById($post_id){
+    return $this->profile->getPostById($post_id);
+}
+public function increaseLikeCount($post_id) {
+    return $this->profile->increaseLikeCount($post_id);
+}
+public function decreaseLikeCount($post_id) {
+    return $this->profile->decreaseLikeCount($post_id);
+}
+public function increaseCommentCount($post_id) {
+    return $this->profile->increaseCommentCount($post_id);
+    }
+public function deletePost($postId){
+    return $this->profile-> deletePost($postId);
+}
+public function decreaseCommentCount($post_id) {
+    return $this->profile->decreaseCommentCount($post_id);
+}
+}
 ?>

@@ -16,7 +16,9 @@ class AccountModal{
     public $status;
     public $cover_photo_url;
 
-    public function __construct($user_id,$email,$phone_number,$password_hash,$full_name,$profile_picture_url,$bio,$date_of_birth,$gender,$create_at,$update_at,$last_active,$status,$cover_photo_url){
+    public $signup_type;
+
+    public function __construct($user_id,$email,$phone_number,$password_hash,$full_name,$profile_picture_url,$bio,$date_of_birth,$gender,$create_at,$update_at,$last_active,$status,$cover_photo_url,$signup_type){
         $this->user_id = $user_id;
         $this->email = $email;
         $this->phone_number = $phone_number;
@@ -31,6 +33,7 @@ class AccountModal{
         $this->last_active=$last_active;
         $this->status=$status;
         $this->cover_photo_url = $cover_photo_url;
+        $this->signup_type = $signup_type;
     }
     public function getUser_id(){
         return $this->user_id;
@@ -115,6 +118,12 @@ class AccountModal{
     }
     public function setCover_photo_url($cover_photo_url){
         $this->cover_photo_url = $cover_photo_url;
+    }
+    public function getSignup_type(){
+        return $this->signup_type;
+    }
+    public function setSignup_type($signup_type){
+        $this->signup_type = $signup_type;
     }
     }
 ?>

@@ -2,7 +2,7 @@
 :root {
     --primary-color: #f33c3c; /* Example blue for links and buttons */
     --secondary-color:#47a81d;; /* Example red for hover effects */
-    --background-color: #f0f2f5; /* Light background color */
+    --background-color: #f9fafb; /* Light background color */
     --text-color: #333333; /* Dark text color */
     --link-hover-color: #d43f3f; /* Hover color for links */
     --sidebar-bg-color: #ffffff; /* Sidebar background */
@@ -11,7 +11,11 @@
     --black : #000000;
     --button-submit:#96969639;
     --button-submit-hover:#969696ab;
+    --button-icon-submit-hover:#7a7a7a57;
     --secondary-text: #65676b;
+    --text-color-secondary:#5f5f5fe9;
+    --icon-color:#888
+
   
 }
 body {
