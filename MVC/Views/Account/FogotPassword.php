@@ -3,7 +3,7 @@ session_start();
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-require_once '../../Controllers/Account.php';
+require_once '../../Controllers/AccountController.php';
 require_once '../../Views/Account/AccountServices.php';
 $accountController=new AccountController();
 $accountService = new AccountService();

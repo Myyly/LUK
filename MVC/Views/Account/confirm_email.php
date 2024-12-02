@@ -2,7 +2,7 @@
 session_start();
 $errorMessage = "";
 require_once '../../Views/Account/AccountServices.php';
-require_once '../../Controllers/Account.php';
+require_once '../../Controllers/AccountController.php';
 $accountController = new AccountController();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['btnConfirm'])) {

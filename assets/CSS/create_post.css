@@ -1,0 +1,365 @@
+.create-post-section {
+    width: 80%;             
+    background-color: #f9f9f9; 
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+ .create-post {
+    display: flex;
+    align-items: center;
+}
+
+.create-post .user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.create-post .post-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background-color: #f0f2f5;
+    cursor: pointer;
+} 
+.d-flex.mb-3 {
+    margin-right: 600px;
+}
+
+.add-image-button {
+    margin-top: 10px;
+}
+
+.form-control {
+    border: none;
+}
+
+/* .image-preview-container {
+    position: relative;
+    width: 48%;
+    margin-bottom: 10px;
+}
+
+.image-preview {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+} */
+
+.delete-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    padding: 0;
+    box-shadow: none;
+}
+
+.delete-icon:hover {
+    color: black;
+    background-color: #dddddd39;
+}
+
+/* .overlay {
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 16px;
+} */
+
+.button-back {
+    margin-left: 10px;
+    border: none;
+    background-color: white;
+}
+
+#detailsImagePreviewContainer {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* #imagePreviewContainer {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    max-height: 400px;
+    overflow-y: auto;
+} */
+
+#add-image,
+#add-emotion,
+#add-location {
+    background-color: white;
+    border: none;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    /* Ensure a perfect circle */
+    transition: box-shadow 0.3s ease;
+}
+#add-image:hover,
+#add-emotion:hover,
+#add-location:hover {
+    background-color: var(--button-submit);
+    box-shadow: 0 0 0 3px white, 0 0 0 5px var(--button-submit);
+}
+
+.search-bar {
+    width: 100%;
+}
+
+/* Set width and style of the modal */
+#emotionsModal .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    padding: 1rem;
+    border-bottom: none;
+    position: relative; /* Để có thể sử dụng cho nút back */
+}
+
+#emotionsModal .modal-header .modal-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center; /* Đảm bảo văn bản được căn giữa */
+    margin: 0; /* Xóa margin thừa nếu có */
+}
+
+#emotionsModal .button-back {
+    position: absolute; /* Đặt nút back ở vị trí cố định */
+    left: 1rem; /* Căn trái */
+    top: 50%; /* Căn giữa theo chiều dọc */
+    transform: translateY(-50%); /* Đưa về giữa hoàn hảo */
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+
+#emotionsModal .button-back {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#emotionsModal .modal-body {
+    padding: 1rem;
+}
+
+#emotionsModal .search-bar {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* Style for the emotion list container */
+#emotionsModal .emotions-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    /* Space between items */
+    position: relative;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Style for each emotion item */
+#emotionsModal .emotion-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 270px;
+    /* Make each item take full available width */
+    box-sizing: border-box;
+}
+
+#emotionsModal .emotion-item:hover {
+    background-color: var(--button-icon-submit-hover);
+    /* Change background on hover */
+}
+
+#emotionsModal .emotion-icon {
+    width: 30px;
+    /* Increase size of the circle */
+    height: 30px;
+    background-color: #e0e0e0;
+    /* Gray background for the circle */
+    border-radius: 50%;
+    /* Circle shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    overflow: hidden;
+    /* Prevent image from exceeding circle boundaries */
+}
+
+#emotionsModal .emotion-icon img {
+    width: 24px;
+    /* Fixed size for the image */
+    height: 24px;
+    object-fit: contain;
+}
+
+.button-back {
+    display: inline-flex;
+    /* Hiển thị dưới dạng inline-flex để căn chỉnh tốt hơn */
+    justify-content: center;
+    /* Canh giữa nội dung */
+    align-items: center;
+    /* Canh giữa nội dung theo chiều dọc */
+    width: 35px;
+    /* Kích thước vòng tròn */
+    height: 35px;
+    /* Kích thước vòng tròn */
+    border-radius: 50%;
+    /* Để tạo thành hình tròn */
+    background-color: var(--button-submit);
+    /* Màu nền, có thể thay đổi */
+}
+
+.button-back i {
+    font-size: 20px;
+    /* Kích thước icon */
+    color: #7c8492;
+    /* Màu sắc của icon */
+}
+
+.emoji-picker {
+    width: 300px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.emoji-category {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.emoji {
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.emoji:hover {
+    transform: scale(1.2);
+}
+
+.btn btn-light add-emoji-button {
+    margin-right: 200px;
+}
+.post{
+    width: 560px;
+    height: auto;
+    }
+    .modal-backdrop {
+        z-index: 1040; /* Lớp nền mờ */
+    }
+    .modal {
+        z-index: 1050; /* Modal chính */
+    }
+    #user-name {
+        display: flex;              /* Đảm bảo các phần tử con nằm trên cùng một dòng */
+        align-items: center;        /* Căn giữa các phần tử theo chiều dọc */
+        justify-content: flex-start; /* Căn các phần tử theo chiều ngang */
+        flex-grow: 1;               /* Cho phép phần tử này chiếm hết không gian có sẵn */
+        white-space: nowrap;        /* Không cho phép xuống dòng */
+    }
+    
+    #user-emotion {
+        display: inline-flex;       /* Đảm bảo cảm xúc nằm cùng dòng với tên */
+        align-items: center;        /* Căn giữa cảm xúc với tên */
+        color: black;               /* Màu chữ cho cảm xúc */
+        margin-left: 10px;          /* Khoảng cách giữa tên và cảm xúc */
+        white-space: nowrap;        /* Đảm bảo không bị xuống dòng */
+    }
+    
+    #selected-emotion {
+        display: inline-flex;       /* Đảm bảo ảnh cảm xúc nằm trên cùng dòng */
+        align-items: center;        /* Căn giữa ảnh với các phần tử khác */
+        margin-left: 10px;          /* Khoảng cách giữa ảnh cảm xúc và tên */
+        white-space: nowrap;        /* Đảm bảo không bị xuống dòng */
+    }
+    
+    
+    
+  /* ///////////////////////////////////////////////////// */
+#imagePreviewContainer {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép hình ảnh hiển thị theo nhiều dòng */
+    gap: 10px; /* Khoảng cách giữa các ảnh */
+}
+
+.image-preview-container {
+    position: relative;
+    width: 48%; /* Mỗi ảnh chiếm 48% chiều rộng của container */
+    overflow: hidden; /* Đảm bảo ảnh không bị tràn ra ngoài */
+}
+
+.image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Đảm bảo ảnh không bị méo và lấp đầy toàn bộ container */
+    border-radius: 10px; /* Tùy chọn: Thêm bo góc cho ảnh */
+}
+
+.delete-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    z-index: 3;
+    border-radius: 10px;
+}
+

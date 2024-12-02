@@ -14,7 +14,9 @@
     --button-icon-submit-hover:#7a7a7a57;
     --secondary-text: #65676b;
     --text-color-secondary:#5f5f5fe9;
-    --icon-color:#888
+    --icon-color:#888;
+    --background-page: #f5f6f7;
+    --background-message: #fd4f0a;
 
   
 }

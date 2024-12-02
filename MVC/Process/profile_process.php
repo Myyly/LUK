@@ -4,14 +4,20 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 define('BASE_DIR', dirname(__DIR__));
-require_once BASE_DIR . '/Controllers/Account.php';
-require_once BASE_DIR . '/Controllers/Comment.php';
+require_once BASE_DIR . '/Controllers/AccountController.php';
+require_once BASE_DIR . '/Controllers/CommentController.php';
+require_once BASE_DIR . '/Controllers/PostController.php';
+require_once BASE_DIR . '/Controllers/PostImageController.php';
 
-$commentController = new CommentsController();
 
+$commentController = new CommentController();
 $accountController = new AccountController();
+$postController =new PostController();
+$postImageController = new PostImageController();
+
 $idUser = $_SESSION['idUser'];
 $user = $accountController->findUserbyId($idUser);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["UpdateAvatar"])) {
         if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
@@ -29,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             // $successDisplayed = true;
                             echo '<script>';
                             echo 'setTimeout(function() {';
-                            echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '";';
+                            echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '";';
                             echo '}, 300);';
                             echo '</script>';
                         } else {
@@ -47,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($accountController->updateAvatar($idUser, $currentAvatar)) {
                 echo '<script>';
                 echo 'setTimeout(function() {';
-                echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '";';
+                echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '";';
                 echo '}, 300);';
                 echo '</script>';
             } else {
@@ -71,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             // $successDisplayed = true;
                             echo '<script>';
                             echo 'setTimeout(function() {';
-                            echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '";';
+                            echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '";';
                             echo '}, 300);';
                             echo '</script>';
                         } else {
@@ -89,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($accountController->updateCover($idUser, $currentCover)) {
                 echo '<script>';
                 echo 'setTimeout(function() {';
-                echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '";';
+                echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '";';
                 echo '}, 300);';
                 echo '</script>';
             } else {
@@ -121,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $successDisplayed = true;
                 echo '<script>';
                 echo 'setTimeout(function() {';
-                echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '";';
+                echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '";';
                 echo '}, 300);';
                 echo '</script>';
             } else {
@@ -136,7 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $accountController->unfriend($idUser, $friend_id);
         echo '<script>';
         echo 'setTimeout(function() {';
-        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=friends_all";';
+        echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=friends_all";';
         echo '}, 300);';
         echo '</script>';
     }
@@ -149,7 +155,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $dateOfBirth = $user->getDate_of_birth();
         $accountController->updateUserInfo($idUser, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
         echo '<script>';
-        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=about";';
+        echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=about";';
         echo '</script>';
     }
     if (isset($_POST["savePhone"])) {
@@ -160,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $dateOfBirth = $user->getDate_of_birth();
         $accountController->updateUserInfo($idUser, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
         echo '<script>';
-        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=about";';
+        echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=about";';
         echo '</script>';
     }
     if (isset($_POST["saveGender"])) {
@@ -171,7 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $dateOfBirth = $user->getDate_of_birth();
         $accountController->updateUserInfo($idUser, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
         echo '<script>';
-        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=about";';
+        echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=about";';
         echo '</script>';
     }
     if (isset($_POST["saveDate"])) {
@@ -182,59 +188,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $dateOfBirth = $_POST["dob"];
         $accountController->updateUserInfo($idUser, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
         echo '<script>';
-        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=about";';
+        echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=about";';
         echo '</script>';
     }
     if (isset($_POST["cancelBio"]) || isset($_POST["cancelPhoneButton"]) || isset($_POST["cancelGenderButton"]) || isset($_POST["cancelDateButton"])) {
         echo '<script>';
-        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=about";';
+        echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=about";';
         echo '</script>';
     }
     if (isset($_POST["btnCreatePost"])) {
-        // Nhận nội dung bài đăng và các thông tin khác
-        $content = $_POST["PostContent"];
-        $emotion_id = $_POST["id_icon"];
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $created_at = (new DateTime())->format('Y-m-d H:i:s');
-
-        // Tạo bài đăng và lưu vào bảng `Posts`
-        $postId = $accountController->CreatePost($idUser, $content, $created_at, $emotion_id);
-
-        // Kiểm tra nếu có ảnh được tải lên
-        if (!empty($_FILES['images']['name'][0])) {
-            foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
-                $fileName = $_FILES['images']['name'][$key];
-                $fileTmpName = $_FILES['images']['tmp_name'][$key];
-                $filePath = "uploads/" . basename($fileName);
-
-                // Lưu ảnh vào thư mục `uploads/`
-                if (move_uploaded_file($fileTmpName, $filePath)) {
-                    echo "File uploaded to: " . $filePath;
-                    $accountController->AddPostImage($postId, $filePath);
-                } else {
-                    echo "File upload failed for: " . $fileName;
-                }
-            }
+        if (!empty($_FILES['images']['name'][0])) { // Kiểm tra file upload
+            echo '<pre>';
+            print_r($_FILES['images']);
+            echo '</pre>';
+        } else {
+            echo "Không có file nào được tải lên.";
         }
-        echo '<script>window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=posts";</script>';
     }
-    if (isset($_POST["addComment"])) {
-        $postId = $_POST["postId"];
-        $commentText = $_POST["commentText"];
-        echo json_encode(["status" => "success"]);
-        $commentController->addComment($idUser, $postId, $commentText);
-        $accountController->increaseCommentCount($postId);
-    }
+        // $content = $_POST["PostContent"] ?? ''; // Nội dung bài viết
+        // $emotion_id = $_POST["id_icon"] ?? null; // Icon cảm xúc
+        // date_default_timezone_set('Asia/Ho_Chi_Minh');
+        // $created_at = (new DateTime())->format('Y-m-d H:i:s');
+    
+        // try {
+        //     // Tạo bài đăng và lấy postId
+        //     $postId = $postController->CreatePost($idUser, $content, $created_at, $emotion_id);
+    
+        //     // Kiểm tra nếu có ảnh được tải lên
+        //     if (!empty($_FILES['images']['tmp_name'][0])) {
+        //         foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
+        //             $fileTmpName = $_FILES['images']['tmp_name'][$key];
+        //             $fileName = $_FILES['images']['name'][$key];
+    
+        //             try {
+        //                 // Đọc dữ liệu ảnh
+        //                 $imageData = file_get_contents($fileTmpName);
+        //                 if ($imageData === false) {
+        //                     throw new Exception("Error reading file: " . $fileName);
+        //                 }
+    
+        //                 // Thêm ảnh vào cơ sở dữ liệu
+        //                 $postImageController->AddPostImage($postId, $imageData);
+        //                 echo "Uploaded: $fileName<br>"; // Debug: Hiển thị ảnh đã upload
+        //             } catch (Exception $e) {
+        //                 echo "Error adding image: " . $fileName . ". " . $e->getMessage();
+        //             }
+        //         }
+        //     }
+    
+        //     // Chuyển hướng tới trang profile
+        //     echo '<script>window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=posts";</script>';
+        // } catch (Exception $e) {
+        //     echo "Error: " . $e->getMessage();
+        // }
+    
+    
     if (isset($_POST["btnCloseModal"])) {
         echo '<script>';
-        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=posts";';
+        echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=posts";';
         echo '</script>';
     }
     if (isset($_POST["btnDeletePost"])) {
         $post_id = $_POST["post_id"];
-        $accountController->deletePost($post_id);
+        $postController->deletePost($post_id);
         echo '<script>';
-        echo '    window.location.href = "/MVC/Views/Account/profile.php?id=' . $idUser . '&sk=posts";';
+        echo '    window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=posts";';
         echo '</script>';
     }
+    
 }

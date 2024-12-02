@@ -6,7 +6,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f2f5;
+    /* background-color: var(--background-page); */
     margin: 0;
     padding: 0;
 }
@@ -60,14 +60,29 @@ body {
     text-align: center;
     background-color: #fff;
     margin-bottom: 20px;
+    text-align: left;
 }
 
 .user-details {
-    position: relative; /* Để nút có thể định vị dựa trên phần tử cha này */
+    position: relative; 
     margin-top: -50px;
-    padding-right: 360px;
+    /* margin-left: -400px; */
+     /* padding-right: 230px;  */
+             
 }
-
+.user-details h2 {
+    font-size: 24px; /* Điều chỉnh kích thước chữ */
+    font-weight: bold;
+    margin-left: 200px;
+    white-space: nowrap; /* Giữ tất cả nội dung trên một dòng */
+    overflow: hidden; /* Ẩn nội dung tràn */
+    
+}
+.user-details p {
+    margin-left: 200px;
+ 
+    
+}
 .edit-information-btn {
     padding: 10px 20px;
     border: none;
