@@ -91,10 +91,36 @@ $status = $accountController->checkFriendshipStatus($idUser, $idFriend);
                                 <i class="fa-solid fa-check fa-lg" style="color: #000000;margin-right: 8px"></i>
                                 Đang theo dõi
                             </button>
-                            <button class="message-friend-btn" type="submit" name="message">
-                                <i class="fa-solid fa-comment-dots fa-lg" style="color: #ffffff;margin-right: 8px;"></i>
-                                Nhắn tin</button>
+                            <?php
+                            $name = $accountController->findUserbyId($idFriend)->getFull_name();
+                            $friendAvatar = $accountController->findUserbyId($idFriend)->getProfile_picture_url();
+                            if ($friendAvatar) {
+                                $friendAvatarSrc= 'data:image/jpeg;base64,' . base64_encode($friendAvatar);
+                            } else {
+                                $friendAvatarSrc = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360";
+                            }
+                            ?>
+                           <button class="message-friend-btn" type="button" name="message" 
+    onclick="openChatDetail(<?php echo $idFriend; ?>, '<?php echo addslashes($name); ?>', '<?php echo $friendAvatarSrc; ?>')">
+    <i class="fa-solid fa-comment-dots fa-lg" style="color: #ffffff;margin-right: 8px;"></i>
+    Nhắn tin
+</button>
                         <?php endif; ?>
+                        <!-- ///////////////////////////////////////CHAT BOX/////////////////////////////// -->
+                        <div id="chatDetail" class="chat-detail" style="display: none;">
+                            <div class="chat-header-detail">
+                                <img src="" alt="Avatar" class="chat-avatar">
+                                <span class="chat-header-username"><strong></strong></span>
+                            </div>
+                            <div class="chat-messages" id="chatMessages">
+                                <p>Đang tải tin nhắn...</p>
+                            </div>
+                            <div class="chat-input">
+                                <input type="text" placeholder="Nhập tin nhắn" id="message">
+                                <button type="button" class="btn-send-message" onclick="sendMessage()">Gửi</button>
+                            </div>
+                        </div>
+                        <!-- ///////////////////////////////////////CHAT BOX/////////////////////////////// -->
                     </form>
                 </div>
             </div>
@@ -311,3 +337,4 @@ $status = $accountController->checkFriendshipStatus($idUser, $idFriend);
 </body>
 
 </html>
+<?php include('../Message/chat_detail.php'); ?>

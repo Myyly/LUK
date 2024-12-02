@@ -10,37 +10,28 @@ app.use(express.static(__dirname + '/public'));
 
 const io = new Server(server, {
     cors: {
-        origin: "*",
-        methods: ["GET", "POST"],
+        origin: "*", // Cho phép tất cả các nguồn gốc (chỉ dùng trong phát triển)
+        methods: ["GET", "POST"], // Cho phép các phương thức HTTP
     },
 });
 
+// Khi một kết nối socket được tạo
 io.on('connection', (socket) => {
-    console.log(`User connected: ${socket.id}`);
+    console.log(`User connected: ${socket.id}`); // Sử dụng dấu backticks để xử lý chuỗi template
 
-    // Khi người dùng kết nối, họ sẽ tham gia vào một room với ID của họ
-    socket.on('join_room', (userId) => {
-        socket.join(userId);
-        console.log(`User ${userId} joined room ${userId}`);
-    });
-
-    // Xử lý gửi tin nhắn
+    // Xử lý sự kiện gửi tin nhắn
     socket.on('send_message', (data) => {
         console.log(data);
-
-        // Gửi tin nhắn đến người nhận
-        io.to(data.receiver_id).emit('receive_message', data);
-
-        // Gửi phản hồi tin nhắn đến chính người gửi
-        io.to(data.sender_id).emit('receive_message', data);
+        io.emit('receive_message', data); // Phát tin nhắn đến tất cả các client kết nối
     });
 
-    // Khi người dùng ngắt kết nối
+    // Khi một socket ngắt kết nối
     socket.on('disconnect', () => {
-        console.log(`User disconnected: ${socket.id}`);
+        console.log(`User disconnected: ${socket.id}`); // Sử dụng dấu backticks để xử lý chuỗi template
     });
 });
 
+// Lắng nghe trên cổng 4000
 server.listen(4000, () => {
     console.log('WebSocket server is running on http://localhost:4000');
 });

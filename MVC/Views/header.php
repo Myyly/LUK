@@ -4,10 +4,15 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require_once '../../Controllers/AccountController.php';
+require_once '../../Controllers/MessageController.php';
 
 $accountController = new AccountController();
+$messageController = new MessageController();
+
 $idUser = $_SESSION['idUser'];
 $user = $accountController->findUserbyId($idUser);
+$messages = $messageController->getConversations($idUser);
+
 
 ?>
 <link rel="stylesheet" href="/CSS/variables.css">

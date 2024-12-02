@@ -80,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         echo json_encode($response);
     } 
-    else if (isset($data['receiver_id'])) {
-        $senderId = $data['receiver_id'];
+    else if (isset($data['sender_id'])) {
+        $senderId = $data['sender_id'];
         $userInfo = $accountController->findUserbyId($senderId);
         if ($userInfo) {
             echo json_encode([
