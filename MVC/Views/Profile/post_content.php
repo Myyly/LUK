@@ -410,7 +410,6 @@ foreach ($posts as $post):
     function toggleLike(button, postId) {
         button.classList.toggle('liked');
         var isLiked = button.classList.contains('liked');
-
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/MVC/Process/photo_process.php", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -421,7 +420,6 @@ foreach ($posts as $post):
         };
         xhr.send("postId=" + postId + "&isLiked=" + isLiked);
     }
-
     function openImageOverlay(imageId, postId) {
         const url = `photo.php?lpid=${imageId}&set=pcb.${postId}`;
        window.location.href = url; 

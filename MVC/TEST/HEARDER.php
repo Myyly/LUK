@@ -20,8 +20,10 @@ $messages = $messageController->getConversations($idUser);
     <div class="logo">
         <a href="/index.php"><img src="/assets/images/LuxLogo.png" alt="Logo"></a>
     </div>
-    <?php  include 'search.php'?> 
-    <!-- </div> -->
+    <div class="search">
+        <input type="text" placeholder="Tìm kiếm trên Luk">
+        <i class="fas fa-search"></i>
+    </div>
     <div class="nav-icons">
         <a href="/index.php" class="icon"><i class="fas fa-home"></i></a>
         <a href="#" class="icon"><i class="fas fa-tv"></i></a>
@@ -221,7 +223,7 @@ $messages = $messageController->getConversations($idUser);
     padding: 3px 8px;
     font-size: 11px;
     display: block; /* Ẩn thông báo mặc định */
-} 
+}
 </style>
 <script>
     // const socket = io('http://localhost:4000');
@@ -259,8 +261,4 @@ $messages = $messageController->getConversations($idUser);
             const idUser = <?php echo json_encode($idUser); ?>; // Nhúng idUser từ PHP vào JavaScript
             handleNotification(idUser, data); // Gọi hàm handleNotification từ notification.js
         });
-    </script>
-<!-- /////////////SEARCH -->
-<script>
-
     </script>

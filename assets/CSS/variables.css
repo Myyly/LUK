@@ -46,7 +46,7 @@ body {
 }
 
 .nav-icons .icon:hover {
-    color: var(--secondary-color); /* Using secondary color for icon hover */
+    color: var(--primary-color); /* Using secondary color for icon hover */
 }
 .error-message {
     background-color: #FBCCDA;

@@ -291,22 +291,7 @@ function scrollToBottom() {
 }
 scrollToBottom();
 ///////////////////////////// Chat SOCKET.IO
-socket.on('receive_message', (data) => {
-    const normalizedReceiverId = String(receiverId).trim();
-    const normalizedSenderId = String(senderId).trim();
 
-    if (String(data.sender_id).trim() === normalizedSenderId && String(data.receiver_id).trim() === normalizedReceiverId) {
-        addMessage(data, 'sent');
-        updateChatList(data);
-    } else if (String(data.sender_id).trim() === normalizedReceiverId && String(data.receiver_id).trim() === normalizedSenderId) {
-        data.avatar_user_chat = avatarUrl;
-        addMessage(data, 'received');
-        updateChatList(data);
-    }
-   
-    
-    // Cập nhật danh sách chat
-});
 function addMessage(data, type) {
     const chatMessagesContainer = document.getElementById("chatMessages");
     // Tạo phần tử tin nhắn
@@ -338,11 +323,8 @@ function addMessage(data, type) {
         year: "numeric",
     });
     messageElement.appendChild(messageTime);
-
-    // Thêm tin nhắn vào khung chat
     chatMessagesContainer.appendChild(messageElement);
 
-    // Cuộn xuống cuối khung chat
     chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 }
 function sendMessage() {
@@ -357,26 +339,26 @@ function sendMessage() {
             avatar_user_chat: avatarUrl, // Avatar người gửi
             sent_at: new Date().toISOString(), // Thời gian gửi
         };
-        socket.emit('send_message', data);
-        updateChatList(data);
-        messageInput.value = '';
+        socket.emit('send_message', data); // Gửi tin nhắn qua socket
+        updateChatList(data); // Cập nhật danh sách chat
+        messageInput.value = ''; // Xóa ô nhập tin nhắn
+
+        // Gửi tin nhắn vào server (PHP)
         fetch("/MVC/Process/message_process.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            sender_id: senderId,
-            receiver_id: receiverId,
-            message_content: message, // Nội dung tin nhắn
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                sender_id: senderId,
+                receiver_id: receiverId,
+                message_content: message, // Nội dung tin nhắn
+            })
         })
-    })
         .then(response => response.json())
         .then(data => {
-           // renderMessages(data); // Hiển thị tin nhắn
+            // Xử lý phản hồi từ server nếu cần
         })
         .catch(error => {
-            // console.error("Error fetching chat details:", error);
-            // const chatMessagesContainer = document.getElementById("chatMessages");
-            // chatMessagesContainer.innerHTML = '<p>Lỗi khi tải tin nhắn.</p>';
+            // Xử lý lỗi nếu có
         });
 
     } else {
@@ -491,7 +473,6 @@ function updateChatList(data) {
     const chatList = document.querySelector('.chat-list');
     const existingChatItem = document.querySelector(`.chat-item[data-id-user-chat="${data.receiver_id}"]`);
 
-    // Nếu đã có đoạn chat này trong danh sách
     if (existingChatItem) {
         const lastMessage = existingChatItem.querySelector('.chat-last-message');
         if (lastMessage) {
@@ -527,4 +508,34 @@ function updateChatList(data) {
         });
     }
 }
+// socket.on('receive_message', (data) => {
+//     const normalizedReceiverId = String(receiverId).trim();
+//     const normalizedSenderId = String(senderId).trim();
+//     if (String(data.sender_id).trim() === normalizedSenderId && String(data.receiver_id).trim() === normalizedReceiverId) {
+//         addMessage(data, 'sent');
+//         updateChatList(data);
+//     } else if (String(data.sender_id).trim() === normalizedReceiverId && String(data.receiver_id).trim() === normalizedSenderId) {
+//         data.avatar_user_chat = avatarUrl;
+//         addMessage(data, 'received');
+//         updateChatList(data);
+//     }
+//     // Cập nhật danh sách chat
+// });
+socket.on('receive_message', (data) => {
+    const normalizedReceiverId = String(receiverId).trim(); // ID người nhận
+    const normalizedSenderId = String(senderId).trim(); // ID người gửi
+    
+    // Kiểm tra người nhận và người gửi
+    if (String(data.sender_id).trim() === normalizedSenderId && String(data.receiver_id).trim() === normalizedReceiverId) {
+        // Nếu là tin nhắn gửi đi
+        addMessage(data, 'sent'); // Gửi tin nhắn
+        updateChatList(data); // Cập nhật danh sách chat
+    } else if (String(data.sender_id).trim() === normalizedReceiverId && String(data.receiver_id).trim() === normalizedSenderId) {
+        // Nếu là tin nhắn nhận
+        data.avatar_user_chat = avatarUrl; // Gán avatar cho người nhận
+        addMessage(data, 'received'); // Nhận tin nhắn
+        updateChatList(data); // Cập nhật danh sách chat
+    }
+});
+
 </script>

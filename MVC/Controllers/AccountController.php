@@ -68,6 +68,13 @@ public function searchFriendsByFullName($idUser, $fullName) {
 public function updateUserInfo($userId, $bio, $phoneNumber, $email, $gender, $dateOfBirth) {
     return $this->account->updateUserInfo($userId, $bio, $phoneNumber, $email, $gender, $dateOfBirth);
 }
+      /////////////////////////////////////////////////search/////////////////////////////
+      public function searchAllUsersByKeyword($keyword) {
+        return $this->account->searchAllUsersByKeyword($keyword);
+}
+public function searchFriendsByKeyword($idUser, $keyword) {
+    return $this->account->searchFriendsByKeyword($idUser, $keyword);
+}
 
 
 

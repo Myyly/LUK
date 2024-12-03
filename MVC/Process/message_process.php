@@ -49,36 +49,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } elseif (isset($data['sender_id'], $data['receiver_id'], $data['message_content'])) {
         // Gửi tin nhắn mới
-        $sender_id = $data['sender_id'];
-        $receiver_id = $data['receiver_id'];
-        $message_content = $data['message_content'];
-        try {
-            $result = $messageController->addMessage($sender_id, $receiver_id, $message_content);
-            if ($result) {
-                $response = [
-                    'status' => 'success',
-                    'message' => 'Tin nhắn đã được gửi.',
-                    'data' => [
-                        'sender_id' => $sender_id,
-                        'receiver_id' => $receiver_id,
-                        'message_content' => $message_content,
-                        'sent_at' => date('Y-m-d H:i:s'),
-                    ],
-                ];
-            } else {
-                $response = [
-                    'status' => 'error',
-                    'message' => 'Có lỗi xảy ra khi gửi tin nhắn.',
-                ];
-            }
-        } catch (Exception $e) {
-            error_log("Error processing message: " . $e->getMessage());
-            $response = [
-                'status' => 'error',
-                'message' => 'Có lỗi khi xử lý tin nhắn.',
-            ];
-        }
-        echo json_encode($response);
+        // $sender_id = $data['sender_id'];
+        // $receiver_id = $data['receiver_id'];
+        // $message_content = $data['message_content'];
+        // try {
+        //     $result = $messageController->addMessage($sender_id, $receiver_id, $message_content);
+        //     if ($result) {
+        //         $response = [
+        //             'status' => 'success',
+        //             'message' => 'Tin nhắn đã được gửi.',
+        //             'data' => [
+        //                 'sender_id' => $sender_id,
+        //                 'receiver_id' => $receiver_id,
+        //                 'message_content' => $message_content,
+        //                 'sent_at' => date('Y-m-d H:i:s'),
+        //             ],
+        //         ];
+        //     } else {
+        //         $response = [
+        //             'status' => 'error',
+        //             'message' => 'Có lỗi xảy ra khi gửi tin nhắn.',
+        //         ];
+        //     }
+        // } catch (Exception $e) {
+        //     error_log("Error processing message: " . $e->getMessage());
+        //     $response = [
+        //         'status' => 'error',
+        //         'message' => 'Có lỗi khi xử lý tin nhắn.',
+        //     ];
+        // }
+        // echo json_encode($response);
     } 
     else if (isset($data['sender_id'])) {
         $senderId = $data['sender_id'];

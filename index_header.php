@@ -18,10 +18,10 @@ $user = $accountController->findUserbyId($idUser);
     <div class="logo">
         <a href="index.php"><img src="/assets/images/LuxLogo.png" alt="Logo"></a>
     </div>
-    <div class="search">
+    <!-- <div class="search">
         <input type="text" placeholder="Tìm kiếm trên Luk">
-        <i class="fas fa-search"></i>
-    </div>
+    </div> -->
+    <?php include 'MVC/Views/Profile/search.php' ?>
     <div class="nav-icons">
         <a href="index.php" class="icon"><i class="fas fa-home"></i></a>
         <a href="#" class="icon"><i class="fas fa-tv"></i></a>

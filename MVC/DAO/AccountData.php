@@ -354,17 +354,13 @@ class AccountData extends Database {
         return true; 
     }
     public function searchFriendsByFullName($idUser, $fullName) {
-        // Chuẩn bị câu truy vấn
         $query = "SELECT u.user_id AS friend_id, u.full_name, u.profile_picture_url 
                   FROM Users u
                   INNER JOIN Friends f ON (u.user_id = f.friend_id OR u.user_id = f.user_id)
                   WHERE (f.user_id = ? OR f.friend_id = ?) 
                   AND u.full_name LIKE ? 
                   AND u.user_id != ?";
-        // Chuẩn bị câu lệnh truy vấn
         $stmt = $this->conn->getConnection()->prepare($query);
-    
-        // Kiểm tra lỗi khi chuẩn bị câu truy vấn
         if (!$stmt) {
             throw new Exception("Lỗi chuẩn bị câu truy vấn: " . $this->conn->getConnection()->error);
         }
@@ -409,6 +405,69 @@ class AccountData extends Database {
             $stmt->close();
             return false;
         }
+    }
+
+    public function searchAllUsersByKeyword($keyword) {
+        $query = "SELECT user_id, full_name, profile_picture_url 
+                  FROM Users 
+                  WHERE full_name LIKE ?";
+        $stmt = $this->conn->getConnection()->prepare($query);
+        if (!$stmt) {
+            throw new Exception("Lỗi chuẩn bị câu truy vấn: " . $this->conn->getConnection()->error);
+        }
+    
+        // Tạo chuỗi tìm kiếm với ký tự wildcard
+        $likeKeyword = "%" . $keyword . "%";
+    
+        // Gán giá trị keyword vào câu truy vấn
+        $stmt->bind_param("s", $likeKeyword);
+    
+        // Thực thi câu truy vấn
+        $stmt->execute();
+    
+        // Lấy kết quả
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+    
+        // Đóng câu lệnh
+        $stmt->close();
+    
+        return $users;
+    }
+    public function searchFriendsByKeyword($idUser, $keyword) {
+        $query = "SELECT u.user_id, u.full_name, u.profile_picture_url 
+                  FROM Users u
+                  INNER JOIN Friends f ON (u.user_id = f.friend_id AND f.user_id = ?) 
+                  OR (u.user_id = f.user_id AND f.friend_id = ?)
+                  WHERE u.full_name LIKE ?";
+        $stmt = $this->conn->getConnection()->prepare($query);
+        if (!$stmt) {
+            throw new Exception("Lỗi chuẩn bị câu truy vấn: " . $this->conn->getConnection()->error);
+        }
+    
+        // Tạo chuỗi tìm kiếm với ký tự wildcard
+        $likeKeyword = "%" . $keyword . "%";
+    
+        // Gán giá trị keyword và user_id
+        $stmt->bind_param("iis", $idUser, $idUser, $likeKeyword);
+    
+        // Thực thi câu truy vấn
+        $stmt->execute();
+    
+        // Lấy kết quả
+        $result = $stmt->get_result();
+        $friends = [];
+        while ($row = $result->fetch_assoc()) {
+            $friends[] = $row;
+        }
+    
+        // Đóng câu lệnh
+        $stmt->close();
+    
+        return $friends;
     }
 }
 ?>
