@@ -24,4 +24,8 @@ public function deleteComment($commentId)
    {
     return $this->comment-> deleteComment($commentId);
    }
+   public function getAllComments()
+{
+    return $this->comment->getAllComments();
+}
 }

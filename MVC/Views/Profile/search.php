@@ -98,7 +98,6 @@
         const historyContainer = document.getElementById('historyContainer');
         historyContainer.style.display = show ? 'block' : 'none';
     }
-
     function loadSearchHistory() {
     const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
     const historyList = document.getElementById('historyList');

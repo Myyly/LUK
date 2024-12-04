@@ -98,8 +98,6 @@ class PostData extends Database
         $result = $stmt->get_result();
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            
-            // Tạo đối tượng PostImage và trả về
             $post = new PostModal(
                 $row['post_id'],
                 $row['user_id'],

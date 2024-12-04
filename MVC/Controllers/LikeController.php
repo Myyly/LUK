@@ -21,5 +21,10 @@ class LikeController
     public function removeLike($userId, $postId){
         return $this->like->removeLike($userId, $postId);
     }
+    public function getAllLikes()
+{
+    return $this->like->getAllLikes();
+
+}
 
 }

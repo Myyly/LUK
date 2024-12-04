@@ -13,7 +13,7 @@ $accountController = new AccountController();
 $messageController = new MessageController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = json_decode(file_get_contents("php://input"), true);
+    $data = json_decode(file_get_contents(filename: "php://input"), true);
     // Kiểm tra nếu dữ liệu có đầy đủ các trường cần thiết
     if (isset($data['idUser_chat'])) {
         $idUserChat = $data['idUser_chat'];
@@ -79,23 +79,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //     ];
         // }
         // echo json_encode($response);
-    } 
-    else if (isset($data['sender_id'])) {
+    } else if (isset($data['sender_id'], $data['receiver_id'])) {
         $senderId = $data['sender_id'];
+        $receiverId = $data['receiver_id'];
         $userInfo = $accountController->findUserbyId($senderId);
-        if ($userInfo) {
-            echo json_encode([
-                'full_name' => $userInfo->getFull_name(),
-                'avatar' => $userInfo->getProfile_picture_url()
-            ]);
+        $name_user = $userInfo->getFull_name();
+        $avatar_user = $userInfo->getProfile_picture_url();
+        if ($avatar_user) {
+            $AvatarSrc = 'data:image/jpeg;base64,' . base64_encode($avatar_user);
         } else {
-            echo json_encode([
-                'full_name' => 'Unknown User',
-                'avatar' => '/path/to/default-avatar.png'
-            ]);
+            $AvatarSrc = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360";
         }
-    } else {
-        echo json_encode(['error' => 'Invalid request']);
+        $response = [
+            'success' => true,
+            'fullName' => $name_user,
+            'profilePicture' => $AvatarSrc
+        ];
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit;
     }
 }
-?>

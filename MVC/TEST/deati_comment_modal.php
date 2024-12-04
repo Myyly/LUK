@@ -1,15 +1,4 @@
 <style>
-    .comments-container {
-        max-height: 300px;
-        /* Giới hạn chiều cao */
-        overflow-y: auto;
-        /* Hiển thị thanh cuộn khi có quá nhiều bình luận */
-        padding: 10px;
-        border: 1px solid #ddd;
-        /* Viền để phân biệt */
-        background-color: #f9f9f9;
-    }
-
     .modal-body-comment {
         padding: 15px;
         max-height: calc(100vh - 120px);
@@ -358,6 +347,7 @@
     data-bs-target="#detailCommentModal_<?php echo $post->getPost_id(); ?>" class="custom-link">
     <?php echo $post->getComment_count(); ?> bình luận
 </a>
+
 <div class="modal fade" id="detailCommentModal_<?php echo $post->getPost_id(); ?>">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -435,8 +425,8 @@
                         <?php echo $post->getLike_count(); ?>
                     </span>
                 </span>
-                <span id="commentCount_<?php $post->getPost_id(); ?>" style="margin-left: 520px;">
-                    <i class="fa-solid fa-comment" style="margin-right: 5px;"></i>
+                <span style="margin-left: 520px;">
+                    <i class="fa-solid fa-comment" style=" margin-right: 5px;"></i>
                     <?php echo $post->getComment_count(); ?>
                 </span>
                 <span style="margin-left: 30px;">
@@ -458,65 +448,62 @@
                     <i class="fa-solid fa-share fa-lg"></i> Chia sẻ
                 </button>
             </div>
-            <div id="commentsContainer_<?php echo $postId; ?>" class="comments-container">
-                <?php foreach ($comments as $comment): ?>
-                    <div class="comment">
-                        <?php
-                        $userIdComment = $comment->getUser_cmt_id();
-                        $userComment = $accountController->findUserbyId($userIdComment);
-                        $commentAvatar = $userComment->getProfile_picture_url();
-                        if ($commentAvatar) {
-                            $commentAvatarSrc = 'data:image/jpeg;base64,' . base64_encode($commentAvatar);
-                        } else {
-                            $commentAvatarSrc = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360";
-                        }
-                        $profileLink = ($userIdComment == $idUser)
-                            ? "profile.php?id=$idUser"
-                            : "profile_friend.php?idFriend=$userIdComment";
-                        ?>
-                        <a href="<?php echo $profileLink; ?>">
-                            <img src="<?php echo $commentAvatarSrc; ?>"
-                                alt="User Profile"
-                                class="comment-profile-pic"
-                                style="width: 40px; height: 40px; border-radius: 50%;">
-                        </a>
-                        <p>
-                            <span class="comment-user"><?php echo $userComment->getFull_name(); ?></span>
-                            <?php echo $comment->getContent(); ?>
-                        </p>
-
-                        <?php if ($userIdComment == $idUser): ?>
-                            <input type="hidden" name="comment_id" value="<?php echo $comment->getComment_id(); ?>">
-                            <button class="delete-comment" type="button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteComment_<?php echo $comment->getComment_id(); ?>">
-                                <i class="fa-solid fa-circle-minus"></i>
-                            </button>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-
-            <!-- <form action="/MVC/Process/photo_process.php" method="POST"> -->
-            <div class="modal-footer">
-                <div class="comment-section-modal">
+            <?php foreach ($comments as $comment): ?>
+                <div class="comment">
                     <?php
-                    $base64Image = base64_encode($userAvatar);
-                    $userAvatarSrc = 'data:image/jpeg;base64,' . $base64Image;
+                    $userIdComment = $comment->getUser_cmt_id();
+                    $userComment = $accountController->findUserbyId($userIdComment);
+                    $commentAvatar = $userComment->getProfile_picture_url();
+                    if ($commentAvatar) {
+                        $commentAvatarSrc = 'data:image/jpeg;base64,' . base64_encode($commentAvatar);
+                    } else {
+                        $commentAvatarSrc = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360";
+                    }
+                    $profileLink = ($userIdComment == $idUser)
+                        ? "profile.php?id=$idUser"
+                        : "profile_friend.php?idFriend=$userIdComment";
                     ?>
-                    <img src="<?php echo $userAvatarSrc; ?>" alt="User Profile" class="profile-pic" style="width: 40px; height: 40px; border-radius: 50%;">
-                    <textarea class="comment-input" id="commentInput_<?php echo $post->getPost_id(); ?>" placeholder="Viết bình luận..." name="commentText"></textarea>
-                    <div class="icons">
-                        <i class="icon fa-regular fa-smile"></i>
-                        <i class="fa-solid fa-camera"></i>
-                    </div>
-                    <button name="addComment" type="button" onclick="addComment(<?php echo $post->getPost_id(); ?>)">
-                        <i class="fa-solid fa-paper-plane"></i>
-                        <input type="hidden" name="post_id" value="<?php echo $post->getPost_id(); ?>">
-                    </button>
+                    <a href="<?php echo $profileLink; ?>">
+                        <img src="<?php echo $commentAvatarSrc; ?>"
+                            alt="User Profile"
+                            class="comment-profile-pic"
+                            style="width: 40px; height: 40px; border-radius: 50%;">
+                    </a>
+                    <p>
+                        <span class="comment-user"><?php echo $userComment->getFull_name(); ?></span>
+                        <?php echo $comment->getContent(); ?>
+                    </p>
+
+                    <?php if ($userIdComment == $idUser): ?>
+                        <input type="hidden" name="comment_id" value="<?php echo $comment->getComment_id(); ?>">
+                        <button class="delete-comment" type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteComment_<?php echo $comment->getComment_id(); ?>">
+                            <i class="fa-solid fa-circle-minus"></i>
+                        </button>
+                    <?php endif; ?>
                 </div>
-            </div>
-            <!-- </form> -->
+            <?php endforeach; ?>
+            <form action="/MVC/Process/photo_process.php" method="POST">
+                <div class="modal-footer">
+                    <div class="comment-section-modal">
+                        <?php
+                        $base64Image = base64_encode($userAvatar);
+                        $userAvatarSrc = 'data:image/jpeg;base64,' . $base64Image;
+                        ?>
+                        <img src="<?php echo $userAvatarSrc; ?>" alt="User Profile" class="profile-pic" style="width: 40px; height: 40px;  border-radius: 50%;">
+                        <textarea class="comment-input" id="commentInput_<?php echo $post->getPost_id(); ?>" placeholder="Viết bình luận..." name="commentText"></textarea>
+                        <div class="icons">
+                            <i class="icon fa-regular fa-smile"></i>
+                            <i class="fa-solid fa-camera"></i>
+                        </div>
+                        <button name="addComment" type="submit">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <input type="hidden" name="post_id" value="<?php echo $post->getPost_id(); ?>">
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -550,86 +537,39 @@
 <?php endforeach; ?>
 <!-- </form> -->
 <script>
-     
     function addComment(postId) {
-        const commentInput = document.getElementById(`commentInput_${postId}`);
-        const commentText = commentInput.value.trim();
+        var commentInput = document.getElementById("commentInput_" + postId);
+        var commentText = commentInput.value.trim();
 
-        if (commentText === '') {
-            alert('Vui lòng nhập nội dung bình luận.');
+        if (commentText === "") {
+            alert("Vui lòng nhập bình luận!");
             return;
         }
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/MVC/Process/profile_process.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                console.log(response); // In ra phản hồi để kiểm tra
 
-        fetch('/MVC/Process/photo_process.php', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    postId: postId,
-                    commentText: commentText
-                })
-            })
-            .then((response) => response.json())
-            .then(data => {
-            if (data.success) {
-                commentInput.value = '';
-                updateCommentsUI(data);
-            } else {
-                alert("Đã xảy ra lỗi khi thêm bình luận!");
+                if (response.status === "success") {
+                    commentInput.value = "";
+                } else {
+                    alert("Đã có lỗi xảy ra. Vui lòng thử lại!");
+                }
             }
-        })
-            .catch(error => {
-                console.error("Lỗi:", error);
-            });
+        };
+        xhr.send("addComment=true&postId=" + postId + "&commentText=" + encodeURIComponent(commentText));
+        const data = {
+        id_user: senderId,
+        content: "đã bình luận vào bài viết của bạn", // Nội dung thông báo
+        type: "comment", 
+        post_id: postId, 
+        sent_at: new Date().toISOString(), 
+        };
+        socket.emit('send_comment', data); // Gửi tin nhắn qua socket
     }
-    function updateCommentsUI(data) {
-        const commentsContainer = document.querySelector(`#commentsContainer_${data.postId}`);
-        commentsContainer.innerHTML += `
-            <div class="comment">
-                <a href="${data.profileLink}">
-                    <img src="${data.profilePicture}" alt="User Profile" class="comment-profile-pic" style="width: 40px; height: 40px; border-radius: 50%;">
-                </a>
-                <p>
-                    <span class="comment-user">${data.fullName}</span>
-                    ${data.commentText}
-                </p>
-            </div>
-        `;
-    }
-    // function addComment(postId) {
-    //     var commentInput = document.getElementById("commentInput_" + postId);
-    //     var commentText = commentInput.value.trim();
-
-    //     if (commentText === "") {
-    //         alert("Vui lòng nhập bình luận!");
-    //         return;
-    //     }
-    //     var xhr = new XMLHttpRequest();
-    //     xhr.open("POST", "/MVC/Process/profile_process.php", true);
-    //     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    //     xhr.onreadystatechange = function() {
-    //         if (xhr.readyState === 4 && xhr.status === 200) {
-    //             var response = JSON.parse(xhr.responseText);
-    //             console.log(response); // In ra phản hồi để kiểm tra
-
-    //             if (response.status === "success") {
-    //                 commentInput.value = "";
-    //             } else {
-    //                 alert("Đã có lỗi xảy ra. Vui lòng thử lại!");
-    //             }
-    //         }
-    //     };
-    //     xhr.send("addComment=true&postId=" + postId + "&commentText=" + encodeURIComponent(commentText));
-    // const data = {
-    // id_user: senderId,
-    // content: "đã bình luận vào bài viết của bạn", // Nội dung thông báo
-    // type: "comment", 
-    // post_id: postId, 
-    // sent_at: new Date().toISOString(), 
-    // };
-    // socket.emit('send_comment', data); // Gửi tin nhắn qua socket
-    //  }
 
     function toggleLikeComment(button, postId) {
         button.classList.toggle('liked');
@@ -646,16 +586,16 @@
 
         xhr.send("postId=" + postId + "&isLiked=" + isLiked);
         const data = {
-            id_user: senderId,
-            content: isLiked ? "đã yêu thích bài viết của bạn" : "đã bỏ yêu thích bài viết của bạn", // Nội dung thông báo
-            type: isLiked ? "like" : "unlike",
-            post_id: postId,
-            sent_at: new Date().toISOString(),
-        };
-        if (isLiked) {
-            socket.emit('send_like', data); // Sự kiện like
-        } else {
-            socket.emit('send_unlike', data); // Sự kiện thả like
-        }
+        id_user: senderId,
+        content: isLiked ? "đã yêu thích bài viết của bạn" : "đã bỏ yêu thích bài viết của bạn", // Nội dung thông báo
+        type: isLiked ? "like" : "unlike", 
+        post_id: postId, 
+        sent_at: new Date().toISOString(), 
+    };
+    if (isLiked) {
+        socket.emit('send_like', data); // Sự kiện like
+    } else {
+        socket.emit('send_unlike', data); // Sự kiện thả like
     }
+}
 </script>

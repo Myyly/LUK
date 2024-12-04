@@ -10,7 +10,7 @@ $accountController = new AccountController();
 $messageController = new MessageController();
 $idUser = $_SESSION['idUser'];
 $activeTab = isset($_GET['sk']) ? $_GET['sk'] : 'posts';
-// $idUser = isset($_GET['id']) ? $_GET['id'] : '';
+//$idUser = isset($_GET['id']) ? $_GET['id'] : '';
 $messages = $messageController->getConversations($idUser);
 
 $user = $accountController->findUserbyId($idUser);

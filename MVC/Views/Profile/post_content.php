@@ -258,6 +258,8 @@ if (!empty($idFriend)) {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+
 
 <link rel="stylesheet" href="/assets/CSS/variables.css">
 
@@ -407,19 +409,32 @@ foreach ($posts as $post):
 
 <?php endforeach; ?>
 <script>
-    function toggleLike(button, postId) {
-        button.classList.toggle('liked');
-        var isLiked = button.classList.contains('liked');
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/MVC/Process/photo_process.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                document.getElementById("likes-count-" + postId).innerText = xhr.responseText;
-            }
-        };
-        xhr.send("postId=" + postId + "&isLiked=" + isLiked);
+   //const socket = io('http://localhost:4000');
+   function toggleLike(button, postId) {
+    button.classList.toggle('liked');
+    var isLiked = button.classList.contains('liked'); // Kiểm tra trạng thái
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/MVC/Process/photo_process.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            document.getElementById("likes-count-" + postId).innerText = xhr.responseText;
+        }
+    };
+    xhr.send("postId=" + postId + "&isLiked=" + isLiked);
+    const data = {
+        id_user: senderId,
+        content: isLiked ? "đã yêu thích bài viết của bạn" : "đã bỏ yêu thích bài viết của bạn", // Nội dung thông báo
+        type: isLiked ? "like" : "unlike", 
+        post_id: postId, 
+        sent_at: new Date().toISOString(), 
+    };
+    if (isLiked) {
+        socket.emit('send_like', data); // Sự kiện like
+    } else {
+        socket.emit('send_unlike', data); // Sự kiện thả like
     }
+}
     function openImageOverlay(imageId, postId) {
         const url = `photo.php?lpid=${imageId}&set=pcb.${postId}`;
        window.location.href = url; 

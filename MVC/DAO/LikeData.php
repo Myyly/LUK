@@ -66,6 +66,36 @@ class LikeData extends Database
         error_log("Error removing like: " . $e->getMessage());
     }
 }
+public function getAllLikes()
+{
+    try {
+        $query = "SELECT * FROM Likes";
+        $stmt = $this->conn->getConnection()->prepare($query);
+
+        if (!$stmt) {
+            throw new Exception("Prepare statement failed: " . $this->conn->getConnection()->error);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $likes = [];
+        while ($row = $result->fetch_assoc()) {
+            $like = new LikeModal(
+                $row['like_id'],         // ID của lượt like (nếu có cột này)
+                $row['user_like_id'],    // ID người dùng
+                $row['post_id'],         // ID bài đăng
+            );
+            $likes[] = $like;
+        }
+
+        $stmt->close();
+        return $likes;
+    } catch (Exception $e) {
+        error_log("Error fetching all likes: " . $e->getMessage());
+        return []; // Trả về mảng rỗng nếu có lỗi
+    }
+}
 
 
 

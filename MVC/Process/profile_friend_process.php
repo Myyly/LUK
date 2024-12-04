@@ -48,6 +48,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo '}, 0);';
         echo '</script>';
     }
-    
 }
 ?>

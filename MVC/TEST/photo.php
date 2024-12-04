@@ -25,7 +25,6 @@ $postImageController = new PostImageController();
 $lpid = isset($_GET['lpid']) ? $_GET['lpid'] : '';
 $set = isset($_GET['set']) ? $_GET['set'] : '';
 $idUser = $_SESSION['idUser'];
-
 $postId_set = $set;
 $postId = str_replace("pcb.", "", $postId_set);
 $idUserOfPost = $postController->getPostById($postId)->getUser_id();
@@ -628,6 +627,7 @@ $comments = $commentController->getAllCommentOfPost($postId);
     function addComment(postId) {
         const commentInput = document.getElementById("commentInput");
         const commentText = commentInput.value.trim();
+
         if (commentText === '') {
             alert('Vui lòng nhập nội dung bình luận.');
             return;
@@ -635,7 +635,7 @@ $comments = $commentController->getAllCommentOfPost($postId);
         const data = {
               id_user: senderId,
              content: "đã bình luận vào bài viết của bạn", // Nội dung thông báo
-             type: "comment",
+            type: "comment",
              post_id: postId,
              sent_at: new Date().toISOString(),
         };

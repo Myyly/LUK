@@ -70,4 +70,36 @@ public function deleteComment($commentId)
         error_log("Error delete post: " . $e->getMessage());
     }
 }
+public function getAllComments()
+{
+    try {
+        $query = "SELECT * FROM Comments"; // Truy vấn tất cả bình luận
+        $stmt = $this->conn->getConnection()->prepare($query);
+
+        if (!$stmt) {
+            throw new Exception("Prepare statement failed: " . $this->conn->getConnection()->error);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $comments = []; // Tạo mảng chứa các bình luận
+
+        while ($row = $result->fetch_assoc()) {
+            $comment = new CommentModal(
+                $row['comment_id'],  // ID của bình luận
+                $row['user_cmt_id'], // ID của người dùng đã bình luận
+                $row['post_id'],     // ID bài đăng mà bình luận thuộc về
+                $row['content'],     // Nội dung của bình luận
+            );
+            $comments[] = $comment; // Thêm bình luận vào mảng
+        }
+
+        $stmt->close();
+        return $comments; // Trả về mảng các đối tượng CommentModal
+    } catch (Exception $e) {
+        error_log("Error fetching all comments: " . $e->getMessage());
+        return []; // Trả về mảng rỗng nếu có lỗi
+    }
+}
 }

@@ -20,7 +20,7 @@ $messages = $messageController->getConversations($idUser);
     <div class="logo">
         <a href="/index.php"><img src="/assets/images/LuxLogo.png" alt="Logo"></a>
     </div>
-    <?php  include 'search.php'?> 
+    <?php include 'search.php' ?>
     <!-- </div> -->
     <div class="nav-icons">
         <a href="/index.php" class="icon"><i class="fas fa-home"></i></a>
@@ -30,10 +30,10 @@ $messages = $messageController->getConversations($idUser);
             <i class="fa-solid fa-comment-dots"></i>
             <span id="notificationCount" class="notification-count">0</span>
         </a>
-        <a href="#" class="icon">
-    <i class="fas fa-bell"></i>
-    <span id="bellNotificationCount" class="notification-count">0</span> <!-- Số lượng thông báo -->
-</a>
+        <a href="#" class="icon" onclick="toggleNotification()">
+            <i class="fas fa-bell"></i>
+            <span id="bellNotificationCount" class="notification-count">0</span> <!-- Số lượng thông báo -->
+        </a>
         <div class="avatar">
             <?php
             $img = $user->getProfile_picture_url();
@@ -59,6 +59,8 @@ $messages = $messageController->getConversations($idUser);
             </div>
         </div>
         <?php include '../Message/chat_menu.php'; ?>
+        <?php include '..//Notification/notification.php'; ?>
+
     </div>
 </div>
 <style>
@@ -210,22 +212,24 @@ $messages = $messageController->getConversations($idUser);
         padding: 3px 8px;
         font-size: 11px;
     }
+
     /* Thông báo chuông */
-#bellNotificationCount {
-    position: absolute;
-    top: 5px;
-    right: 90px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 3px 8px;
-    font-size: 11px;
-    display: block; /* Ẩn thông báo mặc định */
-} 
+    #bellNotificationCount {
+        position: absolute;
+        top: 5px;
+        right: 90px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 3px 8px;
+        font-size: 11px;
+        display: block;
+        /* Ẩn thông báo mặc định */
+    }
 </style>
 <script>
-    // const socket = io('http://localhost:4000');
     let notificationCount = 0;
+
     function toggleDropdown() {
         const dropdownMenu = document.querySelector('.dropdown-menu');
         dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
@@ -239,9 +243,9 @@ $messages = $messageController->getConversations($idUser);
             }
         }
     }
+
     function toggleChatMenu() {
-        
-        if(notificationCount > 0){
+        if (notificationCount > 0) {
             notificationCount--;
             document.getElementById('notificationCount').textContent = notificationCount;
         }
@@ -251,16 +255,61 @@ $messages = $messageController->getConversations($idUser);
         } else {
             chatMenu.style.display = "block";
         }
+        const notification = document.getElementById("notifications");
+        notification.style.display = "none";
     }
 
+    function toggleNotification() {
+        const notification = document.getElementById("notifications");
+        if (notification.style.display === "block") {
+            notification.style.display = "none";
+        } else {
+            notification.style.display = "block";
+        }
+        const chatMenu = document.getElementById("chatMenu");
+        chatMenu.style.display = "none";
+        clickNotification();
+    }
 </script>
 <script>
-        socket.on('notification_update', (data) => {
-            const idUser = <?php echo json_encode($idUser); ?>; // Nhúng idUser từ PHP vào JavaScript
-            handleNotification(idUser, data); // Gọi hàm handleNotification từ notification.js
-        });
-    </script>
+    socket.on('notification_update', (data) => {
+        const idUser = <?php echo json_encode($idUser); ?>; // Nhúng idUser từ PHP vào JavaScript
+        handleNotification(idUser, data); // Gọi hàm handleNotification từ notification.js
+    });
+</script>
 <!-- /////////////SEARCH -->
 <script>
-
-    </script>
+    let notificationCountnBell = 0;
+    socket.on('receive_like', (data) => {
+        const idUser = <?php echo json_encode($idUser); ?>;
+        const normalizedidUser = String(idUser).trim(); 
+        if(String(data.id_user).trim() != normalizedidUser){
+        notificationCountnBell++;
+        document.getElementById('bellNotificationCount').textContent = notificationCountnBell;
+        }
+    });
+    socket.on('receive_comment', (data) => {
+        const idUser = <?php echo json_encode($idUser); ?>;
+        const normalizedidUser = String(idUser).trim(); 
+        if(String(data.id_user).trim() != normalizedidUser){
+         notificationCountnBell++;
+        document.getElementById('bellNotificationCount').textContent = notificationCountnBell;
+        }
+    });
+    socket.on('receive_unlike', (data) => {
+        const idUser = <?php echo json_encode($idUser); ?>;
+        const normalizedidUser = String(idUser).trim(); 
+        if(String(data.id_user).trim() != normalizedidUser){
+        if (notificationCountnBell > 0) {
+            notificationCountnBell--;
+        } else notificationCountnBell = 0;
+        document.getElementById('bellNotificationCount').textContent = notificationCountnBell;
+        }
+    });
+    function clickNotification(){
+        if (notificationCountnBell > 0) {
+            notificationCountnBell--;
+        } else notificationCountnBell = 0;
+        document.getElementById('bellNotificationCount').textContent = notificationCountnBell;
+        }
+</script>

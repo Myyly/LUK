@@ -1,133 +1,223 @@
 <?php
-// Ví dụ hiển thị thông báo khi nhận sự kiện
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $message = $_POST['message'];
-    echo "<div class='notification'>{$message}</div>";
-}
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+require_once '../../Controllers/AccountController.php';
+require_once '../../Controllers/NotificationController.php';
+require_once '../../Controllers/PostController.php';
+require_once '../../Controllers/LikeController.php';
+require_once '../../Controllers/CommentController.php';
+
+$accountController = new AccountController();
+$notificationController = new NotificationController();
+$likeController = new LikeController();
+$commentController = new CommentController();
+$idUser = $_SESSION['idUser'];
+$notifications = $notificationController->getNotifications($idUser);
+$likes = $likeController->getAllLikes();
+$comments = $commentController->getAllComments();
+
 ?>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
+    .notifications {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        width: 300px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
 
-.post {
-    margin: 20px 0;
-}
+    .header {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-.like-btn {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+    .header h2 {
+        font-size: 18px;
+        margin: 0;
+        font-size: 20px;
+        font-weight: bold;
+    }
 
-.like-btn:hover {
-    background-color: #0056b3;
-}
+    .tabs span {
+        margin-left: 10px;
+        cursor: pointer;
+        color: #555;
+        font-size: 14px;
+    }
 
-.notification-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    max-width: 300px;
-}
+    .tabs .active {
+        color: #1877f2;
+        font-weight: bold;
+    }
 
-.notification {
-    background-color: #28a745;
-    color: white;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
+    .notification-list {
+        max-height: 400px;
+        overflow-y: auto;
+    }
 
-/* Icon chuông */
-.notification-bell {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    font-size: 30px;
-    cursor: pointer;
-}
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+    }
 
-.notification-bell i {
-    color: #007bff;
-}
+    .notification-item.unread {
+        background-color: #f9f9f9;
+    }
 
-.notification-count {
-    position: absolute;
-    top: -5px;
-    right: -10px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 3px 8px;
-    font-size: 14px;
-}
+    .notification-item .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .notification-item .content {
+        flex-grow: 1;
+    }
+
+    .notification-item .content p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .notification-item .content .time {
+        font-size: 12px;
+        color: #888;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .view-more {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background: #f0f2f5;
+        color: #1877f2;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+    }
 </style>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notification Example</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
-    <div class="post">
-        <button id="likeButton" class="like-btn">Like</button>
+
+<div class="notifications" id="notifications">
+    <div class="header">
+        <h2>Thông báo</h2>
+        <div class="tabs">
+            <span class="active">Tất cả</span>
+        </div>
     </div>
+    <div class="notification-list">
+        <?php
+        if (!empty($notifications)) {
+            foreach ($notifications as $notification) {
+                $user_notifications = [];
+                if ($notification->getType() == "like") {
+                    foreach ($likes as $like) {
+                        if ($notification->getPost_id() == $like->getPost_id()) {
+                            $user = $accountController->findUserbyId($like->getUser_like_id());
+                            if ($user) {
+                                $user_notifications[] = $user;
+                            }
+                        }
+                    }
+                }
+                // Lấy người dùng từ Comments nếu loại thông báo là "comment"
+                elseif ($notification->getType() == "comment") {
+                    foreach ($comments as $comment) {
+                        if ($notification->getPost_id() == $comment->getPost_id()) {
+                            $user = $accountController->findUserbyId($comment->getUser_cmt_id());
+                            if ($user) {
+                                $user_notifications[] = $user;
+                            }
+                        }
+                    }
+                }
+                // Hiển thị thông báo cho từng người trong danh sách
+                foreach ($user_notifications as $user_notification) {
+                    if ($user_notification->getUser_id() != $idUser) {
+                        $name = $user_notification->getFull_name();
+                        $avatar = $user_notification->getProfile_picture_url();
+                        $avatarSrc = $avatar
+                            ? 'data:image/jpeg;base64,' . base64_encode($avatar)
+                            : "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360";
 
-    <!-- Icon chuông và số lượng thông báo -->
-    <div id="notificationBell" class="notification-bell">
-        <i class="fa fa-bell"></i>
-        <span id="notificationCount" class="notification-count">0</span>
+        ?>
+                        <div class="notification-item">
+                            <img src="<?php echo $avatarSrc ?>" alt="User" class="avatar">
+                            <div class="content">
+                                <p>
+                                    <strong><?php echo $name; ?></strong>
+                                    <?php echo $notification->getContent(); ?>
+                                </p>
+                                <span class="time"><?php echo $notification->getCreated_at(); ?></span>
+                            </div>
+                        </div>
+        <?php
+                    }
+                }
+            }
+        } else {
+            echo "<p>Không có thông báo nào.</p>";
+        }
+        ?>
     </div>
-
-    <div id="notificationContainer" class="notification-container"></div>
-
-</body>
-</html>
+    <button class="view-more">Xem thông báo trước đó</button>
+</div>
 <script>
-  const socket = io('http://localhost:4000');
-
-// Lấy nút Like và thêm sự kiện click
-const likeButton = document.getElementById('likeButton');
-likeButton.addEventListener('click', () => {
-    // Gửi sự kiện "like" tới server
-    socket.emit('like', { username: 'User123', postId: 'Post001' });
-
-    // Đổi màu nút Like
-    likeButton.style.backgroundColor = 'red';
-    likeButton.innerText = 'Liked';
-});
-
-// Số lượng thông báo chưa đọc
-let notificationCount = 0;
-
-// Nhận thông báo từ server
-socket.on('notification', (data) => {
-    const notificationContainer = document.getElementById('notificationContainer');
-    const notificationBell = document.getElementById('notificationBell');
-    const notificationCountElement = document.getElementById('notificationCount');
-    // Hiển thị thông báo
-    const notification = document.createElement('div');
-    notification.classList.add('notification');
-    notification.innerText = data.message;
-    notificationContainer.appendChild(notification);
-
-    // Cập nhật số lượng thông báo
-    notificationCount++;
-    notificationCountElement.innerText = notificationCount;
-
-    // Ẩn thông báo sau 5 giây
-    setTimeout(() => {
-        notification.remove();
-    }, 5000);
-});
+    function addNewNotification(data) {
+    fetch("/MVC/Process/photo_process.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            id_user: data.id_user
+        })
+    })
+    .then(response => response.json())
+    .then(responseData => {
+        var name = responseData.fullName;
+        var avatarSrc = responseData.profilePicture;
+        var notificationItem = document.createElement('div');
+        notificationItem.classList.add('notification-item');
+        notificationItem.innerHTML = `
+            <img src="${avatarSrc}" alt="User" class="avatar">
+            <div class="content">
+                <p><strong>${name}</strong> ${data.content}</p>
+                <span class="time">${new Date(data.sent_at).toLocaleString()}</span>
+            </div>
+        `;
+        var notificationList = document.querySelector('.notification-list');
+        notificationList.prepend(notificationItem);
+    })
+    .catch(error => {
+        console.error("Error fetching user info:", error);
+    });
+}
+    socket.on('receive_comment', (data) => {
+        const id_user_data = String(data.id_user).trim(); 
+        const normalizedSenderId = String(senderId).trim();
+            if (id_user_data !== normalizedSenderId) {
+                addNewNotification(data)
+        } 
+    });
+    socket.on('receive_like', (data) => {
+        const id_user_data = String(data.id_user).trim(); 
+        const normalizedSenderId = String(senderId).trim();
+            if (id_user_data !== normalizedSenderId) {
+                addNewNotification(data)
+        } 
+    });
 </script>

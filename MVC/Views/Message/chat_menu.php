@@ -495,10 +495,10 @@ function updateChatList(data) {
             newChatItem.classList.add('chat-item');
             newChatItem.setAttribute('data-id-user-chat', data.receiver_id);
             newChatItem.innerHTML = `
-                <img src="${userInfo.avatar || '/path/to/default-avatar.png'}" alt="Avatar" class="img-header">
+                <img src="${data.avatar_user_chat}" alt="Avatar" class="img-header">
                 <div class="chat-info">
-                    <p class="chat-name">${userInfo.full_name || 'Unknown User'}</p>
-                    <p class="chat-last-message">${data.message_content || ''}</p>
+                    <p class="chat-name">${userInfo.fullName}</p>
+                    <p class="chat-last-message">${data.message_content}</p>
                 </div>
             `;
             chatList.prepend(newChatItem); // Thêm đoạn chat mới vào đầu danh sách
@@ -522,16 +522,12 @@ function updateChatList(data) {
 //     // Cập nhật danh sách chat
 // });
 socket.on('receive_message', (data) => {
-    const normalizedReceiverId = String(receiverId).trim(); // ID người nhận
-    const normalizedSenderId = String(senderId).trim(); // ID người gửi
-    
-    // Kiểm tra người nhận và người gửi
-    if (String(data.sender_id).trim() === normalizedSenderId && String(data.receiver_id).trim() === normalizedReceiverId) {
-        // Nếu là tin nhắn gửi đi
+    const normalizedReceiverId = String(receiverId).trim(); 
+    const normalizedSenderId = String(senderId).trim();
+        if (String(data.sender_id).trim() === normalizedSenderId && String(data.receiver_id).trim() === normalizedReceiverId) {
         addMessage(data, 'sent'); // Gửi tin nhắn
         updateChatList(data); // Cập nhật danh sách chat
     } else if (String(data.sender_id).trim() === normalizedReceiverId && String(data.receiver_id).trim() === normalizedSenderId) {
-        // Nếu là tin nhắn nhận
         data.avatar_user_chat = avatarUrl; // Gán avatar cho người nhận
         addMessage(data, 'received'); // Nhận tin nhắn
         updateChatList(data); // Cập nhật danh sách chat
