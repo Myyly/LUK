@@ -82,7 +82,6 @@ class MessageData extends Database
 public function getChatDetails($user_id, $other_user_id)
 {
     try {
-        // Truy vấn lấy tất cả tin nhắn giữa user_id và other_user_id
         $query = "
             SELECT * 
             FROM Messages 

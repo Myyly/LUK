@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -20,22 +20,20 @@ function scrollToBottom() {
 }
 scrollToBottom();
 ///////////////////////////// Chat SOCKET.IO
-socket.on('receive_message', (data) => {
-    const normalizedReceiverId = String(receiverId).trim();
-    const normalizedSenderId = String(senderId).trim();
+// socket.on('receive_message', (data) => {
+//     const normalizedReceiverId = String(receiverId).trim();
+//     const normalizedSenderId = String(senderId).trim();
 
-    if (String(data.sender_id).trim() === normalizedSenderId && String(data.receiver_id).trim() === normalizedReceiverId) {
-        addMessage(data, 'sent');
-        updateChatList(data);
-    } else if (String(data.sender_id).trim() === normalizedReceiverId && String(data.receiver_id).trim() === normalizedSenderId) {
-        data.avatar_user_chat = avatarUrl;
-        addMessage(data, 'received');
-        updateChatList(data);
-    }
+//     if (String(data.sender_id).trim() === normalizedSenderId && String(data.receiver_id).trim() === normalizedReceiverId) {
+//         addMessage(data, 'sent');
+//         updateChatList(data);
+//     } else if (String(data.sender_id).trim() === normalizedReceiverId && String(data.receiver_id).trim() === normalizedSenderId) {
+//         data.avatar_user_chat = avatarUrl;
+//         addMessage(data, 'received');
+//         updateChatList(data);
+//     }
    
-    
-    // Cập nhật danh sách chat
-});
+//     });
 function addMessage(data, type) {
     const chatMessagesContainer = document.getElementById("chatMessages");
     // Tạo phần tử tin nhắn
@@ -165,7 +163,6 @@ function renderMessages(data) {
                 messageElement.classList.add("sent");
             } else {
                 messageElement.classList.add("received");
-
                 // Hiển thị avatar của người nhận
                 const avatarElement = document.createElement("img");
                 avatarElement.classList.add("avatar");
@@ -217,43 +214,52 @@ function scrollToBottom() {
 scrollToBottom();
 
 function updateChatList(data) {
-    const chatList = document.querySelector('.chat-list');
-    const existingChatItem = document.querySelector(`.chat-item[data-id-user-chat="${data.receiver_id}"]`);
-
-    // Nếu đã có đoạn chat này trong danh sách
-    if (existingChatItem) {
-        const lastMessage = existingChatItem.querySelector('.chat-last-message');
-        if (lastMessage) {
-            lastMessage.textContent = data.message_content;
-        }
-        chatList.prepend(existingChatItem); 
-    } else {
-        // Nếu chưa có, thêm mới một chat item vào danh sách
-        fetch("/MVC/Process/message_process.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                sender_id: data.sender_id,
-                receiver_id: data.receiver_id
-            })
+    // Gửi yêu cầu đến API để lấy thông tin người dùng và lịch sử chat
+    fetch("/MVC/Process/message_process.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            sender_id: data.sender_id,
+            receiver_id: data.receiver_id
         })
+    })
         .then(response => response.json())
         .then(userInfo => {
-            const newChatItem = document.createElement('li');
-            newChatItem.classList.add('chat-item');
-            newChatItem.setAttribute('data-id-user-chat', data.receiver_id);
-            newChatItem.innerHTML = `
-                <img src="${userInfo.avatar || '/path/to/default-avatar.png'}" alt="Avatar" class="img-header">
-                <div class="chat-info">
-                    <p class="chat-name">${userInfo.full_name || 'Unknown User'}</p>
-                    <p class="chat-last-message">${data.message_content || ''}</p>
-                </div>
-            `;
-            chatList.prepend(newChatItem); // Thêm đoạn chat mới vào đầu danh sách
+            const chatList = document.querySelector('.chat-list'); // Danh sách chat
+            const existingChatItem = document.querySelector(
+                `.chat-item[data-id-user-chat="${data.receiver_id}"]`
+            );
+
+            // Tin nhắn cuối cùng
+            let lastMessageContent = data.message_content;
+
+            if (userInfo.chatDetails && userInfo.chatDetails.length > 0) {
+                // Cập nhật nội dung đoạn chat có sẵn
+                if (existingChatItem) {
+                    existingChatItem.querySelector('.chat-last-message').textContent = lastMessageContent;
+                    chatList.prepend(existingChatItem); // Đưa đoạn chat lên đầu danh sách
+                }
+            } else {
+                // Tạo đoạn chat mới nếu không có lịch sử tin nhắn
+                if (!existingChatItem) {
+                    const newChatItem = document.createElement('li');
+                    newChatItem.classList.add('chat-item');
+                    newChatItem.setAttribute('data-id-user-chat', data.receiver_id);
+                    newChatItem.innerHTML = `
+                        <img src="${userInfo.profilePicture}" alt="Avatar" class="img-header">
+                        <div class="chat-info">
+                            <p class="chat-name">${userInfo.fullName}</p>
+                            <p class="chat-last-message">${lastMessageContent}</p>
+                        </div>
+                    `;
+                    chatList.prepend(newChatItem); // Thêm đoạn chat mới vào danh sách
+                }
+            }
         })
         .catch(error => {
             console.error("Error fetching user info:", error);
         });
-    }
 }
-</script>
+</script> -->

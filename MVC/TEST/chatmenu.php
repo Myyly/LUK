@@ -8,6 +8,7 @@ error_reporting(E_ALL);
 
 ?>
 <link rel="stylesheet" href="/assets/CSS/variables.css">
+<script src="/MVC/Views/Profile/notification_event.js"></script>
 <style>
     .chat-menu {
         display: none;

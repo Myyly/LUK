@@ -6,10 +6,23 @@ error_reporting(E_ALL);
 // require_once '../../Controllers/Account.php';
 require_once 'MVC/Controllers/AccountController.php';
 require_once 'MVC/Controllers/MessageController.php';
-$messageController = new MessageController();
+require_once 'MVC/Controllers/NotificationController.php';
+require_once 'MVC/Controllers/PostController.php';
+require_once 'MVC/Controllers/LikeController.php';
+require_once 'MVC/Controllers/CommentController.php';
 
+
+$messageController = new MessageController();
 $accountController = new AccountController();
+$notificationController = new NotificationController();
+$likeController = new LikeController();
+$commentController = new CommentController();
+
 $idUser = $_SESSION['idUser'];
+
+$notifications = $notificationController->getNotifications($idUser);
+$likes = $likeController->getAllLikes();
+$comments = $commentController->getAllComments();
 $messages = $messageController->getConversations($idUser);
 $user = $accountController->findUserbyId($idUser);
 ?>
@@ -18,18 +31,19 @@ $user = $accountController->findUserbyId($idUser);
     <div class="logo">
         <a href="index.php"><img src="/assets/images/LuxLogo.png" alt="Logo"></a>
     </div>
-    <!-- <div class="search">
-        <input type="text" placeholder="Tìm kiếm trên Luk">
-    </div> -->
     <?php include 'MVC/Views/Profile/search.php' ?>
     <div class="nav-icons">
-        <a href="index.php" class="icon"><i class="fas fa-home"></i></a>
-        <a href="#" class="icon"><i class="fas fa-tv"></i></a>
-        <a href="#" class="icon"><i class="fas fa-users"></i></a>
+    <a href="/index.php" class="icon"><i class="fas fa-home"></i></a>
+        <!-- <a href="#" class="icon"><i class="fas fa-tv"></i></a> -->
+        <!-- <a href="#" class="icon"><i class="fas fa-users"></i></a> -->
         <a href="#" class="icon" onclick="toggleChatMenu()">
-            <i class="fa-solid fa-comment-dots"></i></i>
+            <i class="fa-solid fa-comment-dots"></i>
+            <span id="notificationCount" class="notification-count">0</span>
         </a>
-        <a href="#" class="icon"><i class="fas fa-bell"></i></a>
+        <a href="#" class="icon" onclick="toggleNotification()">
+            <i class="fas fa-bell"></i>
+            <span id="bellNotificationCount" class="notification-count">0</span> <!-- Số lượng thông báo -->
+        </a>
         <div class="avatar">
             <?php
             $img = $user->getProfile_picture_url();
@@ -46,160 +60,22 @@ $user = $accountController->findUserbyId($idUser);
                         <li>
                             <a href="./MVC/Views/Profile/profile.php?id=<?php echo $idUser; ?>"><i class="fas fa-user"></i> Profile</a>
                         </li>
-                        <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                        <li><a href="#"><i class="fas fa-question-circle"></i> Help</a></li>
-                        <li><a href="login.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <!-- <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                        <li><a href="#"><i class="fas fa-question-circle"></i> Help</a></li> -->
+                        <li><a href="/MVC/Views/Account/login.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </form>
             </div>
         </div>
         <?php include 'MVC/Views/Message/chat_menu.php';?>
-       
+        <?php include 'MVC/Views/Notification/notification.php'; ?>
     </div>
 </div>
-<style>
-    /* Header container */
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #fff;
-        padding: 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
+<link rel="stylesheet" href="/assets/CSS/header.css">
+<script src="/MVC/Views/Profile/notification_event.js"></script>
 
-    .header input[type="text"] {
-        width: 60%;
-        padding: 8px 20px;
-        border: 1px solid #ccc;
-        border-radius: 20px;
-        background-color: #f0f2f5;
-    }
-
-    .header .search {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        position: relative;
-    }
-
-    .header .search input[type="text"] {
-        width: 350px;
-        padding: 10px 40px 10px 20px;
-        font-size: 16px;
-        border-radius: 20px;
-        border: 1px solid #ccc;
-        outline: none;
-        background-color: #f0f2f5;
-    }
-
-    .header .search i {
-        position: absolute;
-        top: 50%;
-        right: 10px;
-        transform: translateY(-50%);
-        color: #606770;
-    }
-
-    .header a img {
-        width: 40px;
-        height: 40px;
-        margin-right: 15px;
-    }
-
-    .nav-icons {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .nav-icons .icon {
-        font-size: 22px;
-        color: #606770;
-        text-decoration: none;
-        padding: 10px;
-    }
-
-    .nav-icons .icon:hover {
-        background-color: var(--nav-icons-hover-background);
-        border-radius: 50%;
-        color: var(--link-hover-color);
-        padding: 10px;
-    }
-
-    .nav-icons .avatar {
-        display: flex;
-        align-items: center;
-        margin-left: 15px;
-    }
-
-    .nav-icons .avatar img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 8px;
-    }
-
-    .nav-icons .avatar span {
-        font-size: 16px;
-        color: #333;
-    }
-
-    .avatar {
-        position: relative;
-    }
-
-    .avatar img {
-        cursor: pointer;
-    }
-
-    .dropdown-menu {
-        display: none;
-        position: absolute;
-        top: 50px;
-        right: 0;
-        background-color: #fff;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        width: 200px;
-        z-index: 1;
-    }
-
-    .dropdown-menu ul {
-        list-style-type: none;
-        padding: 10px;
-        margin: 0;
-    }
-
-    .dropdown-menu ul li {
-        padding: 10px 0;
-    }
-
-    .dropdown-menu ul li a {
-        text-decoration: none;
-        color: #333;
-        display: flex;
-        align-items: center;
-    }
-
-    .dropdown-menu ul li a i {
-        margin-right: 10px;
-    }
-
-    .dropdown-menu ul li:hover {
-        background-color: #f0f2f5;
-        border-radius: 8px;
-    }
-</style>
 <script>
-    function toggleDropdown() {
-        const dropdownMenu = document.querySelector('.dropdown-menu');
-        dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-    }
+     let notificationCount = 0;
     window.onclick = function(event) {
         if (!event.target.matches('.avatar img')) {
             const dropdownMenu = document.querySelector('.dropdown-menu');
@@ -208,12 +84,49 @@ $user = $accountController->findUserbyId($idUser);
             }
         }
     }
-    function toggleChatMenu() {
-    const chatMenu = document.getElementById("chatMenu");
-    if (chatMenu.style.display === "block") {
-        chatMenu.style.display = "none";
-    } else {
-        chatMenu.style.display = "block";
-    }
-}
+    
+
+</script>
+<script>
+    let notificationCountnBell = 0;
+    socket.on('receive_like', (data) => {
+        const idUser = <?php echo json_encode($idUser); ?>;
+        const normalizedidUser = String(idUser).trim(); 
+        if(String(data.id_user).trim() != normalizedidUser){
+        notificationCountnBell++;
+        document.getElementById('bellNotificationCount').textContent = notificationCountnBell;
+        }
+    });
+    socket.on('receive_comment', (data) => {
+        const idUser = <?php echo json_encode($idUser); ?>;
+        const normalizedidUser = String(idUser).trim(); 
+        if(String(data.id_user).trim() != normalizedidUser){
+         notificationCountnBell++;
+        document.getElementById('bellNotificationCount').textContent = notificationCountnBell;
+        }
+    });
+    socket.on('receive_unlike', (data) => {
+        const idUser = <?php echo json_encode($idUser); ?>;
+        const normalizedidUser = String(idUser).trim(); 
+        if(String(data.id_user).trim() != normalizedidUser){
+        if (notificationCountnBell > 0) {
+            notificationCountnBell--;
+        } else notificationCountnBell = 0;
+        document.getElementById('bellNotificationCount').textContent = notificationCountnBell;
+        }
+    });
+    // function clickNotification(){
+    //     if (notificationCountnBell > 0) {
+    //         notificationCountnBell--;
+    //     } else notificationCountnBell = 0;
+    //     document.getElementById('bellNotificationCount').textContent = notificationCountnBell;
+      //  }
+//     socket.on('receive_message', (data) => {
+//     // Chỉ tăng thông báo nếu người gửi chưa trong danh sách
+//     if (!unreadUsers.has(data.sender_id)) {
+//         unreadUsers.add(data.sender_id);
+//         notificationCount++;
+//         document.getElementById('notificationCount').textContent = notificationCount;
+//     }
+// });
 </script>

@@ -197,50 +197,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo '</script>';
     }
     if (isset($_POST["btnCreatePost"])) {
-        if (!empty($_FILES['images']['name'][0])) { // Kiểm tra file upload
-            echo '<pre>';
-            print_r($_FILES['images']);
-            echo '</pre>';
-        } else {
-            echo "Không có file nào được tải lên.";
+    //     if (!empty($_FILES['images']['name'][0])) { // Kiểm tra file upload
+    //         echo '<pre>';
+    //         print_r($_FILES['images']);
+    //         echo '</pre>';
+    //     } else {
+    //         echo "Không có file nào được tải lên.";
+    //     }
+    // }
+        $content = $_POST["PostContent"] ?? ''; // Nội dung bài viết
+        $emotion_id = $_POST["id_icon"] ?? null; // Icon cảm xúc
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        $created_at = (new DateTime())->format('Y-m-d H:i:s');
+    
+        try {
+            // Tạo bài đăng và lấy postId
+            $postId = $postController->CreatePost($idUser, $content, $created_at, $emotion_id);
+    
+            // Kiểm tra nếu có ảnh được tải lên
+            if (!empty($_FILES['images']['tmp_name'][0])) {
+                foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
+                    $fileTmpName = $_FILES['images']['tmp_name'][$key];
+                    $fileName = $_FILES['images']['name'][$key];
+    
+                    try {
+                        // Đọc dữ liệu ảnh
+                        $imageData = file_get_contents($fileTmpName);
+                        if ($imageData === false) {
+                            throw new Exception("Error reading file: " . $fileName);
+                        }
+    
+                        // Thêm ảnh vào cơ sở dữ liệu
+                        $postImageController->AddPostImage($postId, $imageData);
+                        echo "Uploaded: $fileName<br>"; // Debug: Hiển thị ảnh đã upload
+                    } catch (Exception $e) {
+                        echo "Error adding image: " . $fileName . ". " . $e->getMessage();
+                    }
+                }
+            }
+    
+            // Chuyển hướng tới trang profile
+            echo '<script>window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=posts";</script>';
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
         }
-    }
-        // $content = $_POST["PostContent"] ?? ''; // Nội dung bài viết
-        // $emotion_id = $_POST["id_icon"] ?? null; // Icon cảm xúc
-        // date_default_timezone_set('Asia/Ho_Chi_Minh');
-        // $created_at = (new DateTime())->format('Y-m-d H:i:s');
-    
-        // try {
-        //     // Tạo bài đăng và lấy postId
-        //     $postId = $postController->CreatePost($idUser, $content, $created_at, $emotion_id);
-    
-        //     // Kiểm tra nếu có ảnh được tải lên
-        //     if (!empty($_FILES['images']['tmp_name'][0])) {
-        //         foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
-        //             $fileTmpName = $_FILES['images']['tmp_name'][$key];
-        //             $fileName = $_FILES['images']['name'][$key];
-    
-        //             try {
-        //                 // Đọc dữ liệu ảnh
-        //                 $imageData = file_get_contents($fileTmpName);
-        //                 if ($imageData === false) {
-        //                     throw new Exception("Error reading file: " . $fileName);
-        //                 }
-    
-        //                 // Thêm ảnh vào cơ sở dữ liệu
-        //                 $postImageController->AddPostImage($postId, $imageData);
-        //                 echo "Uploaded: $fileName<br>"; // Debug: Hiển thị ảnh đã upload
-        //             } catch (Exception $e) {
-        //                 echo "Error adding image: " . $fileName . ". " . $e->getMessage();
-        //             }
-        //         }
-        //     }
-    
-        //     // Chuyển hướng tới trang profile
-        //     echo '<script>window.location.href = "/MVC/Views/Profile/profile.php?id=' . $idUser . '&sk=posts";</script>';
-        // } catch (Exception $e) {
-        //     echo "Error: " . $e->getMessage();
-        // }
+        }
     
     
     if (isset($_POST["btnCloseModal"])) {

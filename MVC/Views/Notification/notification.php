@@ -2,20 +2,20 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-require_once '../../Controllers/AccountController.php';
-require_once '../../Controllers/NotificationController.php';
-require_once '../../Controllers/PostController.php';
-require_once '../../Controllers/LikeController.php';
-require_once '../../Controllers/CommentController.php';
+// require_once '../../Controllers/AccountController.php';
+// require_once '../../Controllers/NotificationController.php';
+// require_once '../../Controllers/PostController.php';
+// require_once '../../Controllers/LikeController.php';
+// require_once '../../Controllers/CommentController.php';
 
-$accountController = new AccountController();
-$notificationController = new NotificationController();
-$likeController = new LikeController();
-$commentController = new CommentController();
-$idUser = $_SESSION['idUser'];
-$notifications = $notificationController->getNotifications($idUser);
-$likes = $likeController->getAllLikes();
-$comments = $commentController->getAllComments();
+// $accountController = new AccountController();
+// $notificationController = new NotificationController();
+// $likeController = new LikeController();
+// $commentController = new CommentController();
+// $idUser = $_SESSION['idUser'];
+// $notifications = $notificationController->getNotifications($idUser);
+// $likes = $likeController->getAllLikes();
+// $comments = $commentController->getAllComments();
 
 ?>
 <style>

@@ -62,12 +62,12 @@ $user = $accountController->findUserbyId($idUser);
 <?php include 'sidebar.php'; ?>
 
 <div class="main-content">
-    <div class="stories">
+    <!-- <div class="stories">
         <div class="story">Story 1</div>
         <div class="story">Story 2</div>
         <div class="story">Story 3</div>
         <div class="story">Story 4</div>
-    </div>
+    </div> -->
     <div class="container-create-post">
         <?php include 'create_post.php'; ?>
     </div>

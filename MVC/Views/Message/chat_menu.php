@@ -7,6 +7,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ?>
 <link rel="stylesheet" href="/assets/CSS/variables.css">
+<script src="/MVC/Views/Profile/notification_event.js"></script>
+
 <style>
     .chat-menu {
         display: none;
@@ -193,16 +195,17 @@ error_reporting(E_ALL);
         font-size: 14px;
     }
 
-    .close  {
+    .close {
         background: var(--primary-color);
         color: white;
-        border: none ;
+        border: none;
         padding: 8px 16px;
         border-radius: 20px;
         cursor: pointer;
-        font-size: 24px; 
+        font-size: 24px;
     }
-     /* .close i {
+
+    /* .close i {
     background: var(--primary-color);
     font-size: 24px; 
     color: #fafafa; 
@@ -210,24 +213,26 @@ error_reporting(E_ALL);
     transition: transform 0.2s ease;
 } */
 
-.close:hover {
-    transform: scale(1.2); 
-    color: #ff5c5c;
-}  
-.btn-send-message{
-    background: var(--primary-color);
+    .close:hover {
+        transform: scale(1.2);
+        color: #ff5c5c;
+    }
+
+    .btn-send-message {
+        background: var(--primary-color);
         color: white;
-        border: none ;
+        border: none;
         padding: 8px 16px;
         border-radius: 20px;
         cursor: pointer;
-        
-}
-#chatMessages {
-    max-height: 500px; 
-    overflow-y: auto;
-    border: 1px solid #ccc;
-}
+
+    }
+
+    #chatMessages {
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+    }
 </style>
 <div id="chatMenu" class="chat-menu">
     <div class="chat-header">
@@ -262,118 +267,120 @@ error_reporting(E_ALL);
         <?php } ?>
     </ul>
 </div>
-<div id="chatDetail" class="chat-detail" style="display: none;" >
-<div class="chat-header-detail">
-            <img src="" alt="Avatar" class="chat-avatar">
-            <span class="chat-header-username"><strong></strong></span>
-            <!-- <span class="close" onclick="closeChatDetail()">
+<div id="chatDetail" class="chat-detail" style="display: none;">
+    <div class="chat-header-detail">
+        <img src="" alt="Avatar" class="chat-avatar">
+        <span class="chat-header-username"><strong></strong></span>
+        <!-- <span class="close" onclick="closeChatDetail()">
                 <i class="fa-solid fa-circle-xmark" style="color: #fafafa;"></i>
             </span> -->
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <p>Đang tải tin nhắn...</p>
-        </div>
-        <div class="chat-input">
-            <input type="text" placeholder="Nhập tin nhắn" id="message">
-            <button type="button" class="btn-send-message" onclick="sendMessage()">Gửi</button>
-        </div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+        <p>Đang tải tin nhắn...</p>
+    </div>
+    <div class="chat-input">
+        <input type="text" placeholder="Nhập tin nhắn" id="message">
+        <button type="button" class="btn-send-message" onclick="sendMessage()">Gửi</button>
+    </div>
 </div>
 <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
 <script>
-const socket = io('http://localhost:4000');
-const chatItems = document.querySelectorAll(".chat-item");
-let receiverId = null;  // ID người nhận
-let senderId = <?php echo $_SESSION['idUser']; ?>; // ID người gửi
-let avatarUrl = null;   // Avatar người nhận
-function scrollToBottom() {
-    const chatMessagesContainer = document.getElementById("chatMessages");
-    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-}
-scrollToBottom();
-///////////////////////////// Chat SOCKET.IO
-
-function addMessage(data, type) {
-    const chatMessagesContainer = document.getElementById("chatMessages");
-    // Tạo phần tử tin nhắn
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("chat-message", type); // Thêm class type (sent/received)
-
-    // Nếu là tin nhắn "received", hiển thị avatar người nhận
-    if (type === "received") {
-        const avatarElement = document.createElement("img");
-        avatarElement.classList.add("avatar");
-        avatarElement.src = data.avatar_user_chat; // Sử dụng avatar người nhận
-        messageElement.appendChild(avatarElement);
+    const socket = io('http://localhost:4000');
+    const chatItems = document.querySelectorAll(".chat-item");
+    let receiverId = null; // ID người nhận
+    let senderId = <?php echo $_SESSION['idUser']; ?>; // ID người gửi
+    let avatarUrl = null; // Avatar người nhận
+    function scrollToBottom() {
+        const chatMessagesContainer = document.getElementById("chatMessages");
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
     }
+    scrollToBottom();
+    ///////////////////////////// Chat SOCKET.IO
 
-    // Nội dung tin nhắn
-    const messageContent = document.createElement("div");
-    messageContent.classList.add("message-content");
-    messageContent.textContent = data.message_content;
-    messageElement.appendChild(messageContent);
+    function addMessage(data,type) {
+        const chatMessagesContainer = document.getElementById("chatMessages");
+        // Tạo phần tử tin nhắn
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("chat-message", type); // Thêm class type (sent/received)
 
-    // Thời gian tin nhắn
-    const messageTime = document.createElement("div");
-    messageTime.classList.add("message-time");
-    messageTime.textContent = new Date(data.sent_at).toLocaleString("vi-VN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-    });
-    messageElement.appendChild(messageTime);
-    chatMessagesContainer.appendChild(messageElement);
+        // Nếu là tin nhắn "received", hiển thị avatar người nhận
+        if (type === "received") {
+            const avatarElement = document.createElement("img");
+            avatarElement.classList.add("avatar");
+            avatarElement.src = data.avatar_user_chat;
+            messageElement.appendChild(avatarElement);
+        }
 
-    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-}
-function sendMessage() {
-    const messageInput = document.getElementById('message');
-    const message = messageInput.value.trim();
-    
-    if (senderId && receiverId && message) {
-        const data = {
-            sender_id: senderId, // ID người gửi
-            receiver_id: receiverId, // ID người nhận
-            message_content: message, // Nội dung tin nhắn
-            avatar_user_chat: avatarUrl, // Avatar người gửi
-            sent_at: new Date().toISOString(), // Thời gian gửi
-        };
-        socket.emit('send_message', data); // Gửi tin nhắn qua socket
-        updateChatList(data); // Cập nhật danh sách chat
-        messageInput.value = ''; // Xóa ô nhập tin nhắn
+        // Nội dung tin nhắn
+        const messageContent = document.createElement("div");
+        messageContent.classList.add("message-content");
+        messageContent.textContent = data.message_content;
+        messageElement.appendChild(messageContent);
 
-        // Gửi tin nhắn vào server (PHP)
-        fetch("/MVC/Process/message_process.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                sender_id: senderId,
-                receiver_id: receiverId,
-                message_content: message, // Nội dung tin nhắn
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Xử lý phản hồi từ server nếu cần
-        })
-        .catch(error => {
-            // Xử lý lỗi nếu có
+        // Thời gian tin nhắn
+        const messageTime = document.createElement("div");
+        messageTime.classList.add("message-time");
+        messageTime.textContent = new Date(data.sent_at).toLocaleString("vi-VN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
         });
-
-    } else {
-        alert('Vui lòng nhập tin nhắn.');
+        messageElement.appendChild(messageTime);
+        chatMessagesContainer.appendChild(messageElement);
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+       
     }
-}
+
+    function sendMessage() {
+        const messageInput = document.getElementById('message');
+        const message = messageInput.value.trim();
+
+        if (senderId && receiverId && message) {
+            const data = {
+                sender_id: senderId, // ID người gửi
+                receiver_id: receiverId, // ID người nhận
+                message_content: message, // Nội dung tin nhắn
+                avatar_user_chat: avatarUrl, // Avatar người gửi
+                sent_at: new Date().toISOString(), // Thời gian gửi
+            };
+            socket.emit('send_message', data); // Gửi tin nhắn qua socket
+           // updateChatList(data); // Cập nhật danh sách chat
+            messageInput.value = ''; // Xóa ô nhập tin nhắn
+
+            // Gửi tin nhắn vào server (PHP)
+            fetch("/MVC/Process/message_process.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        sender_id: senderId,
+                        receiver_id: receiverId,
+                        message_content: message, 
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                })
+                .catch(error => {
+                });
+
+        } else {
+            alert('Vui lòng nhập tin nhắn.');
+        }
+    }
 </script>
 
 <script>
-function openChatDetail(idUser_chat, userName, avatar) {
-    receiverId = idUser_chat; // Gán receiverId từ tham số
-    avatarUrl = avatar; // Gán avatar người nhận từ tham số
-    const chatDetail = document.getElementById("chatDetail");
-    chatDetail.style.display = "flex"; // Hiển thị hộp thoại
-    chatDetail.innerHTML = `
+    function openChatDetail(idUser_chat, userName, avatar) {
+        increaseNotification();
+        receiverId = idUser_chat; // Gán receiverId từ tham số
+        avatarUrl = avatar; // Gán avatar người nhận từ tham số
+        const chatDetail = document.getElementById("chatDetail");
+        chatDetail.style.display = "flex"; // Hiển thị hộp thoại
+        chatDetail.innerHTML = `
         <div class="chat-header-detail">
             <img src="${avatar}" alt="Avatar" class="chat-avatar">
             <span class="chat-header-username"><strong>${userName}</strong></span>
@@ -390,148 +397,142 @@ function openChatDetail(idUser_chat, userName, avatar) {
         </div>
     `;
 
-    // Lấy tin nhắn cũ và hiển thị
+        // Lấy tin nhắn cũ và hiển thị
+        fetch("/MVC/Process/message_process.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    idUser_chat: idUser_chat
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                renderMessages(data); // Hiển thị tin nhắn
+            })
+            .catch(error => {
+                console.error("Error fetching chat details:", error);
+                const chatMessagesContainer = document.getElementById("chatMessages");
+                chatMessagesContainer.innerHTML = '<p>Lỗi khi tải tin nhắn.</p>';
+            });
+    }
+    function renderMessages(data) {
+        const chatMessagesContainer = document.getElementById("chatMessages");
+        chatMessagesContainer.innerHTML = ''; // Clear any existing messages or loading text
+        if (data.length > 0) {
+            data.forEach(message => {
+                const messageElement = document.createElement("div");
+                messageElement.classList.add("chat-message");
+
+                if (message.sender_id === <?php echo $_SESSION['idUser']; ?>) {
+                    messageElement.classList.add("sent");
+                } else {
+                    messageElement.classList.add("received");
+
+                    // Hiển thị avatar của người nhận
+                    const avatarElement = document.createElement("img");
+                    avatarElement.classList.add("avatar");
+                    avatarElement.src = message.avatar_user_chat;
+                    messageElement.appendChild(avatarElement);
+                }
+
+                // Nội dung tin nhắn
+                const messageContent = document.createElement("div");
+                messageContent.classList.add("message-content");
+                messageContent.textContent = message.message_content;
+                messageElement.appendChild(messageContent);
+
+                // Thời gian tin nhắn
+                const messageTime = document.createElement("div");
+                messageTime.classList.add("message-time");
+                messageTime.textContent = new Date(message.sent_at).toLocaleString("vi-VN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                });
+                messageElement.appendChild(messageTime);
+
+                // Thêm tin nhắn vào khung chat
+                chatMessagesContainer.appendChild(messageElement);
+            });
+        } else {
+            chatMessagesContainer.innerHTML = '<p>Không có tin nhắn.</p>';
+        }
+    }
+
+    function closeChatDetail() {
+        document.getElementById("chatDetail").style.display = "none";
+      //  document.getElementById("chatMenu").style.display = "none";
+    }
+    chatItems.forEach((item) => {
+        item.addEventListener("click", function() {
+            receiverId = this.dataset.idUserChat;
+            const userName = this.querySelector(".chat-name").textContent;
+            avatarUrl = this.dataset.avatar;
+            openChatDetail(receiverId, userName, avatarUrl);
+        });
+    });
+
+    function scrollToBottom() {
+        const chatMessagesContainer = document.getElementById("chatMessages");
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    }
+    scrollToBottom();
+function updateChatList(data) {
     fetch("/MVC/Process/message_process.php", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idUser_chat: idUser_chat })
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            sender_id: data.sender_id,
+            receiver_id: data.receiver_id
+        })
     })
         .then(response => response.json())
-        .then(data => {
-            renderMessages(data); // Hiển thị tin nhắn
-        })
-        .catch(error => {
-            console.error("Error fetching chat details:", error);
-            const chatMessagesContainer = document.getElementById("chatMessages");
-            chatMessagesContainer.innerHTML = '<p>Lỗi khi tải tin nhắn.</p>';
-        });
-}
-function renderMessages(data) {
-    const chatMessagesContainer = document.getElementById("chatMessages");
-    chatMessagesContainer.innerHTML = ''; // Clear any existing messages or loading text
-    if (data.length > 0) {
-        data.forEach(message => {
-            const messageElement = document.createElement("div");
-            messageElement.classList.add("chat-message");
-
-            if (message.sender_id === <?php echo $_SESSION['idUser']; ?>) {
-                messageElement.classList.add("sent");
-            } else {
-                messageElement.classList.add("received");
-
-                // Hiển thị avatar của người nhận
-                const avatarElement = document.createElement("img");
-                avatarElement.classList.add("avatar");
-                avatarElement.src = message.avatar_user_chat;
-                messageElement.appendChild(avatarElement);
-            }
-
-            // Nội dung tin nhắn
-            const messageContent = document.createElement("div");
-            messageContent.classList.add("message-content");
-            messageContent.textContent = message.message_content;
-            messageElement.appendChild(messageContent);
-
-            // Thời gian tin nhắn
-            const messageTime = document.createElement("div");
-            messageTime.classList.add("message-time");
-            messageTime.textContent = new Date(message.sent_at).toLocaleString("vi-VN", {
-                hour: "2-digit",
-                minute: "2-digit",
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-            });
-            messageElement.appendChild(messageTime);
-
-            // Thêm tin nhắn vào khung chat
-            chatMessagesContainer.appendChild(messageElement);
-        });
-    } else {
-        chatMessagesContainer.innerHTML = '<p>Không có tin nhắn.</p>';
-    }
-}
-function closeChatDetail() {
-    document.getElementById("chatDetail").style.display = "none";
-    document.getElementById("chatMenu").style.display = "none";
-    }
-chatItems.forEach((item) => {
-    item.addEventListener("click", function() {
-        receiverId = this.dataset.idUserChat; 
-        const userName = this.querySelector(".chat-name").textContent; 
-        avatarUrl = this.dataset.avatar; 
-        openChatDetail(receiverId, userName, avatarUrl); 
-    });
-});
-function scrollToBottom() {
-    const chatMessagesContainer = document.getElementById("chatMessages");
-    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-}
-scrollToBottom();
-
-function updateChatList(data) {
-    const chatList = document.querySelector('.chat-list');
-    const existingChatItem = document.querySelector(`.chat-item[data-id-user-chat="${data.receiver_id}"]`);
-
-    if (existingChatItem) {
-        const lastMessage = existingChatItem.querySelector('.chat-last-message');
-        if (lastMessage) {
-            lastMessage.textContent = data.message_content;
-        }
-        chatList.prepend(existingChatItem); 
-    } else {
-        // Nếu chưa có, thêm mới một chat item vào danh sách
-        fetch("/MVC/Process/message_process.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                sender_id: data.sender_id,
-                receiver_id: data.receiver_id
-            })
-        })
-        .then(response => response.json())
         .then(userInfo => {
-            const newChatItem = document.createElement('li');
-            newChatItem.classList.add('chat-item');
-            newChatItem.setAttribute('data-id-user-chat', data.receiver_id);
-            newChatItem.innerHTML = `
-                <img src="${data.avatar_user_chat}" alt="Avatar" class="img-header">
-                <div class="chat-info">
-                    <p class="chat-name">${userInfo.fullName}</p>
-                    <p class="chat-last-message">${data.message_content}</p>
-                </div>
-            `;
-            chatList.prepend(newChatItem); // Thêm đoạn chat mới vào đầu danh sách
+            const chatList = document.querySelector('.chat-list'); // Danh sách chat
+            const existingChatItem = document.querySelector(
+                `.chat-item[data-id-user-chat="${userInfo.id}"]`
+            );
+            const lastMessageContent = data.message_content;
+            if (userInfo.chatDetails != []) {
+                existingChatItem.querySelector('.chat-last-message').textContent = lastMessageContent;
+                chatList.prepend(existingChatItem); 
+            } else {
+                // Tạo đoạn chat mới nếu chưa tồn tại
+                const newChatItem = document.createElement('li');
+                newChatItem.classList.add('chat-item');
+                newChatItem.setAttribute('data-id-user-chat', userInfo.receiver_id);
+                newChatItem.innerHTML = `
+                    <img src="${data.avatar_user_chat}" alt="Avatar" class="img-header">
+                    <div class="chat-info">
+                        <p class="chat-name">${userInfo.fullName}</p>
+                        <p class="chat-last-message">${lastMessageContent}</p>
+                    </div>
+                `;
+                chatList.prepend(newChatItem); // Thêm đoạn chat mới vào danh sách
+            }
         })
         .catch(error => {
-            console.error("Error fetching user info:", error);
+            console.error("Error updating chat list:", error);
         });
-    }
 }
-// socket.on('receive_message', (data) => {
-//     const normalizedReceiverId = String(receiverId).trim();
-//     const normalizedSenderId = String(senderId).trim();
-//     if (String(data.sender_id).trim() === normalizedSenderId && String(data.receiver_id).trim() === normalizedReceiverId) {
-//         addMessage(data, 'sent');
-//         updateChatList(data);
-//     } else if (String(data.sender_id).trim() === normalizedReceiverId && String(data.receiver_id).trim() === normalizedSenderId) {
-//         data.avatar_user_chat = avatarUrl;
-//         addMessage(data, 'received');
-//         updateChatList(data);
-//     }
-//     // Cập nhật danh sách chat
-// });
 socket.on('receive_message', (data) => {
-    const normalizedReceiverId = String(receiverId).trim(); 
+    const normalizedReceiverId = String(receiverId).trim();
     const normalizedSenderId = String(senderId).trim();
-        if (String(data.sender_id).trim() === normalizedSenderId && String(data.receiver_id).trim() === normalizedReceiverId) {
-        addMessage(data, 'sent'); // Gửi tin nhắn
-        updateChatList(data); // Cập nhật danh sách chat
+
+    if (String(data.sender_id).trim() === normalizedSenderId && String(data.receiver_id).trim() === normalizedReceiverId) {
+        // Tin nhắn gửi
+        addMessage(data, 'sent');
+        updateChatList(data);
     } else if (String(data.sender_id).trim() === normalizedReceiverId && String(data.receiver_id).trim() === normalizedSenderId) {
-        data.avatar_user_chat = avatarUrl; // Gán avatar cho người nhận
-        addMessage(data, 'received'); // Nhận tin nhắn
-        updateChatList(data); // Cập nhật danh sách chat
+        data.avatar_user_chat = avatarUrl; // Avatar người nhận
+        addMessage(data, 'received');
+        updateChatList(data);
     }
 });
-
 </script>
