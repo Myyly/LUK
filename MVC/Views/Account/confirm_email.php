@@ -47,10 +47,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     
                     if ($email && $password) {
                         $password_hash = password_hash($password, PASSWORD_BCRYPT);
-                        $profile_picture_url = 'user_default.png';
+                        $profile_picture_url = " ";
                         $bio = " "; 
                         $status = "active";
-                        $accountController->SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status);
+                        $cover_photo ="";
+                        $signup_type="email";
+                        $accountController->SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo,$signup_type);
                         header("Location: signup_success.php"); 
                         exit();
                     } else {

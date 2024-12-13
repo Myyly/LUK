@@ -13,8 +13,8 @@ class AccountController {
         $this->account = new AccountData();
         // $this->profile = new ProfileData();
     }
-    public function SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url){
-        return $this->account->SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url);
+    public function SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url,$signup_type){
+        return $this->account->SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url,$signup_type);
     }
     public function checkEmailExist($email){
         return $this->account->checkEmailExist($email);

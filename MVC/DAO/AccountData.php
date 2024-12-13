@@ -9,7 +9,7 @@ class AccountData extends Database {
     public function __construct() {
         $this->conn = new Database();
     }
-    public function SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url) {
+    public function SignUp($email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url,$signup_type) {
         if ($email === NULL && $phone_number === NULL) {
             throw new InvalidArgumentException('Both email and phone number cannot be NULL');
         }
@@ -17,14 +17,14 @@ class AccountData extends Database {
             throw new InvalidArgumentException('One or more required parameters are NULL');
         }
     
-        $query = "INSERT INTO Users (email, phone_number, password_hash, full_name, date_of_birth, gender, profile_picture_url, bio, status,cover_photo_url) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO Users (email, phone_number, password_hash, full_name, date_of_birth, gender, profile_picture_url, bio, status,cover_photo_url,signup_type) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->getConnection()->prepare($query);
         if ($stmt === false) {
             throw new Exception('Prepare failed: ' . $this->conn->getConnection()->error);
         }
     
-        if (!$stmt->bind_param("ssssssssss", $email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url)) {
+        if (!$stmt->bind_param("sssssssssss", $email, $phone_number, $password_hash, $full_name, $date_of_birth, $gender, $profile_picture_url, $bio, $status,$cover_photo_url,$signup_type)) {
             throw new Exception('Binding parameters failed: ' . $stmt->error);
         }
     

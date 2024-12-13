@@ -333,8 +333,8 @@ $user = $accountController->findUserbyId($idUser);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="d-flex mb-3" style="width: 500px;margin-left: 300px;">
-                        <img src="<?php echo $avatarSrc; ?>" alt="User Avatar" style="width:50px; height:50px; border-radius:50%;margin-left: 10px;">
+                    <div class="d-flex mb-3" style="width: 800px;margin-left: 300px;">
+                        <img src="<?php echo $avatarSrc; ?>" alt="User Avatar" style="width:50px; height:50px; border-radius:50%;margin-left: 165px !important;">
                         <div class="ms-3">
                             <h6 id="user-name"><strong><?php echo $user->getFull_name() ?></strong>
                                 <span id="user-emotion" style="color: black;"></span>

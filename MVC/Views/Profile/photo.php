@@ -12,8 +12,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 $currentUrl = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 
-if (strpos($currentUrl, '/index.php') === false) {
-    unset($_SESSION['index_page']);
+if (strpos($currentUrl, '/MVC/Views/Newsfeed/home.php') === false) {
+    unset($_SESSION['home_page']);
 }
 
 $accountController = new AccountController();

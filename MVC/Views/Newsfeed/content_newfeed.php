@@ -4,16 +4,15 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 //session_start();
 // Lưu URL hiện tại vào session
-$_SESSION['home_page'] = '/home.php';
+$_SESSION['home_page'] = '/MVC/Views/Newsfeed/home.php';
 
-require_once('MVC/Controllers/EmotionController.php');
-require_once 'MVC/Controllers/AccountController.php';
-require_once 'MVC/Controllers/CommentController.php';
-require_once 'MVC/Controllers/LikeController.php';
-require_once 'MVC/Controllers/PostController.php';
-require_once 'MVC/Controllers/PostImageController.php';
-require_once 'MVC/Controllers/FriendController.php';
-
+require_once '../../Controllers/EmotionController.php';
+require_once '../../Controllers/AccountController.php';
+require_once '../../Controllers/CommentController.php';
+require_once '../../Controllers/LikeController.php';
+require_once '../../Controllers/PostController.php';
+require_once '../../Controllers/PostImageController.php';
+require_once '../../Controllers/FriendController.php';
 
 $emotionController = new EmotionController();
 $accountController = new AccountController();
@@ -189,22 +188,6 @@ $listNewsFeed = $friendController->getFriendsList($idUser);
         width: 100%;
         overflow: hidden;
     }
-
-    
-/* 
-    #imageModal img {
-        display: block;
-        max-width: 100%;
-        margin-bottom: 10px;
-        border-radius: 8px;
-    }
-
-    #imageModal {
-        display: none;
-        justify-content: center;
-        align-items: center;
-    } */
-
     .custom-link {
         color: var(--text-color-secondary);
         text-decoration: none;
@@ -238,8 +221,8 @@ foreach ($listNewsFeed as $newfeed):
                 $img = $userOfPost->getProfile_picture_url();
                 $id = $post->getUser_id();
                 $profileLink = ($id == $idUser)
-                    ? "MVC/Views/Profile/profile.php?id=$idUser"
-                    : "MVC/Views/Profile/profile_friend.php?idFriend=$id";
+                    ? "/MVC/Views/Profile/profile.php?id=$idUser"
+                    : "/MVC/Views/Profile/profile_friend.php?idFriend=$id";
                 if ($img) {
                     $avatarSrc = 'data:image/jpeg;base64,' . base64_encode($img);
                 } else {
@@ -306,24 +289,13 @@ foreach ($listNewsFeed as $newfeed):
                     </div>
                 <?php endforeach; ?>
             </div>
-
-            <script>
-                // document.querySelectorAll('.image-overlay').forEach(overlay => {
-                //     overlay.addEventListener('click', function() {
-                //         const url = this.getAttribute('data-url');
-                //         if (url) {
-                //             window.location.href = url;
-                //         }
-                //     });
-                // });
-            </script>
             <div class="post-stats">
                 <span>
                     <img src="/assets/emotions/heart.png" alt="" style="margin-left: 7px;">
                     <span class="likes-count" id="likes-count-<?php echo $post->getPost_id(); ?>"><?php echo $post->getLike_count(); ?></span>
                 </span>
                 <span style="margin-left: 490px;">
-                    <?php include 'MVC/Views/Profile/detail_comment_of_post.php'; ?>
+                    <?php include '../Profile/detail_comment_of_post.php'; ?>
                 </span>
                 <span style="margin-left: 37px;"> <?php echo $post->getShare_count() ?> lượt chia sẻ</span>
             </div>
@@ -342,26 +314,6 @@ foreach ($listNewsFeed as $newfeed):
                 <button><i class="fas fa-share fa-lg" type="button"></i> Chia sẻ</button>
             </div>
         </div>
-        <!-- <div class="modal fade custom-modal" id="deletePost_<?php echo $post->getPost_id(); ?>" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalLabel"><strong>Xóa bài viết</strong></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" style="height: 100px;">
-                        Bạn có chắc chắn muốn xóa bài viết này không?
-                    </div>
-                    <div class="modal-footer-custom">
-                        <button type="button" class="btn btn-secondary-custom" data-bs-dismiss="modal">Hủy</button>
-                        <form action="/MVC/Process/profile_process.php" method="post">
-                            <button type="submit" class="btn btn-danger" name="btnDeletePost">Xóa</button>
-                            <input type="hidden" name="post_id" value="<?php echo $post->getPost_id(); ?>">
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div> -->
     <?php endforeach; ?>
 <?php endforeach; ?>
 <script>
@@ -381,7 +333,7 @@ foreach ($listNewsFeed as $newfeed):
     }
 
     function openImageOverlay(imageId, postId) {
-        const url = `MVC/Views/Profile/photo.php?lpid=${imageId}&set=pcb.${postId}`;
+        const url = `../Profile/photo.php?lpid=${imageId}&set=pcb.${postId}`;
         window.location.href = url;
     }
 </script>

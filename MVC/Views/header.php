@@ -37,11 +37,11 @@ $messages = $messageController->getConversations($idUser);
 <script src="/MVC/Views/Profile/notification_event.js"></script>
 <div class="header">
     <div class="logo">
-        <a href="/index.php"><img src="/assets/images/LuxLogo.png" alt="Logo"></a>
+        <a href="../Newsfeed/home.php"><img src="/assets/images/LuxLogo.png" alt="Logo"></a>
     </div>
-    <?php include 'search.php' ?>
+    <?php include 'Profile/search.php'; ?>
     <div class="nav-icons">
-        <a href="/index.php" class="icon"><i class="fas fa-home"></i></a>
+        <a href="../Newsfeed/home.php" class="icon"><i class="fas fa-home"></i></a>
         <!-- <a href="#" class="icon"><i class="fas fa-tv"></i></a>
         <a href="#" class="icon"><i class="fas fa-users"></i></a> -->
         <a href="#" class="icon" onclick="toggleChatMenu()">
@@ -67,7 +67,7 @@ $messages = $messageController->getConversations($idUser);
                 <form action="" method="GET">
                     <ul>
                         <li>
-                            <a href="profile.php?id=<?php echo $idUser; ?>"><i class="fas fa-user"></i> Profile</a>
+                            <a href="/MVC/Views/Profile/profile.php?id=<?php echo $idUser; ?>"><i class="fas fa-user"></i> Profile</a>
                         </li>
                         <!-- <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
                         <li><a href="#"><i class="fas fa-question-circle"></i> Help</a></li> -->

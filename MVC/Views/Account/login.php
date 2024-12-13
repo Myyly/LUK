@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (($user->getEmail() == $contact || $user->getPhone_numberl() == $contact) && password_verify($pass, $user->getPassword_hash())) {
                 $_SESSION['idUser'] = $user->getUser_id();
                 // echo "Đăng nhập thành công!";
-                header("Location: /index.php"); 
+                header("Location: /MVC/Views/Newfeed/home.php"); 
                 exit();
             } else {
                 $errorMessage= " Mật khẩu không đúng.";

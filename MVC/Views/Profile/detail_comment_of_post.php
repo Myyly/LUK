@@ -372,15 +372,15 @@
                 $name = $accountController->findUserbyId($post->getUser_id())->getFull_name();
                 $img = $accountController->findUserbyId($post->getUser_id())->getProfile_picture_url();
                 $profileLink = ($id == $idUser)
-                    ? "profile.php?id=$idUser"
-                    : "profile_friend.php?idFriend=$id";
+                ? "/MVC/Views/Profile/profile.php?id=$idUser"
+                : "/MVC/Views/Profile/profile_friend.php?idFriend=$id";
                 if ($img) {
                     $commentAvatarSrc = 'data:image/jpeg;base64,' . base64_encode($img);
                 } else {
                     $commentAvatarSrc = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360";
                 }
                 ?>
-                <h5 class="modal-title" id="modalLabel" style="color: #000;margin-top: -10px;">Bài viết của <?php echo $name; ?></h5>
+                <h5 class="modal-title" id="modalLabel" style="color: #000;margin-top: -10px;font-weight: bold;">Bài viết của <?php echo $name; ?></h5>
             </div>
             <div class="modal-body-comment">
                 <div class="post-content-modal">
@@ -412,7 +412,6 @@
                                     <img class="post-image" src="<?php echo $imgSrc ?>" alt="Post Image"
                                         style="width: 100%; height: 100%; object-fit: cover;"
                                         onclick="openImageOverlay('<?php echo $image->getImage_id(); ?>', '<?php echo $post->getPost_id(); ?>')">
-
                                     <?php if ($index === 3 && $totalImages > 4): ?>
                                         <div class="image-overlay" data-url="photo.php?lpid=<?php echo $image->getImage_id(); ?>&set=pcb.<?php echo $post->getPost_id(); ?>"
                                             style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); color: white; 
@@ -530,11 +529,13 @@
                 </div>
                 <div class="modal-body">
                     <p>Bạn có chắc muốn xóa bình luận này?</p>
-                    <form action="/MVC/Process/photo_process.php" method="POST">
+                    
+                </div>
+                <div class="modal-footer">
+                <form action="/MVC/Process/photo_process.php" method="POST">
                         <button type="submit" class="btn btn-danger" name="delete_comment">Xóa</button>
                         <input type="hidden" name="comment_id" value="<?php echo $comment->getComment_id(); ?>">
                         <input type="hidden" name="post_id" value="<?php echo $comment->getPost_id(); ?>">
-
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="openDetailModal(<?php echo $post->getPost_id(); ?>)">Hủy</button>
                     </form>
                     <script>
@@ -543,7 +544,7 @@
                             myModal.show();
                         }
                     </script>
-                </div>
+                    </div>
             </div>
         </div>
     </div>

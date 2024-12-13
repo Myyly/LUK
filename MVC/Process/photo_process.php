@@ -25,9 +25,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST["btnClosed"])) {
         $currentUrl = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-        if (strpos($currentUrl, '/index.php') !== false) {
+        if (strpos($currentUrl, '/MVC/Views/Newsfeed/home.php') !== false) {
             echo '<script>';
-            echo '    window.location.href = "/index.php";';
+            echo '    window.location.href = "/MVC/Views/Newsfeed/home.php";';
             echo '</script>';
         } else {
                 $id = $_POST["id"];
@@ -43,10 +43,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } 
         }
         if (isset($_POST["btnClosed_photo"])) {
-            $previousUrl = isset($_SESSION['index_page']) ? $_SESSION['index_page'] : '';
-            if ($previousUrl === '/index.php') {
+            $previousUrl = isset($_SESSION['home_page']) ? $_SESSION['home_page'] : '';
+            if ($previousUrl === '/MVC/Views/Newsfeed/home.php') {
                 echo '<script>';
-                echo '    window.location.href = "/index.php";';
+                echo '    window.location.href = "/MVC/Views/Newsfeed/home.php";';
                 echo '</script>';
                 exit;
             }

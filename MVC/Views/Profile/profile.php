@@ -42,16 +42,17 @@ $user->getProfile_picture_url();
     .modal-header {
         display: flex;
         justify-content: center;
-        /* Căn giữa theo chiều ngang */
         align-items: center;
-        text-align: center;
+        text-align: center !important;
+        color: #f5f5f5;
+        background-color: #dc3545;
+        
     }
 
     .modal-title {
         flex-grow: 1;
         /* Đảm bảo tiêu đề chiếm toàn bộ không gian và căn giữa */
     }
-
 
     /* Căn giữa ảnh đại diện */
     .modal-body {
@@ -82,16 +83,24 @@ $user->getProfile_picture_url();
         width: 150px;
         height: 150px;
         border-radius: 50%;
-        /* Cắt tròn cho avatar */
         object-fit: cover;
         margin-bottom: 20px;
-
     }
-
     .content-section {
         margin-left: 20px;
         /* Lùi vào 20px từ cạnh trái */
     }
+    .modal-footer{
+        display: flex;
+        flex-direction: row !important;
+        justify-content: center !important;
+        align-items: center;
+    }
+    .modal-footer button[type=submit] {
+        background-color: #dc3545 !important;
+        border: none !important;
+    }
+    
 </style>
 
 <body>
@@ -319,7 +328,7 @@ $user->getProfile_picture_url();
                                 $base64Image = base64_encode($img);
                                 $avatarSrc = 'data:image/jpeg;base64,' . $base64Image;
                                 ?>
-                                <img id="avatarPreview" src="<?php echo $avatarSrc ?>" alt="Avatar preview" class="avatar-img">
+                                <img id="avatarPreview" src="<?php echo $avatarSrc ?>" alt="Avatar preview" class="avatar-img" style="margin-left: 90px;">
                             </div>
                             <div class="mb-3">
                                 <label for="avatarUpload" class="form-label">Chọn ảnh</label>
@@ -329,7 +338,7 @@ $user->getProfile_picture_url();
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
-                        <button type="submit" class="btn btn-primary" form="avatarUploadForm" name="UpdateAvatar">Lưu</button>
+                        <button type="submit" class="btn btn-primary" form="avatarUploadForm" name="UpdateAvatar" style="background-color: #dc3545;">Lưu</button>
                     </div>
                 </div>
             </div>
@@ -374,7 +383,7 @@ $user->getProfile_picture_url();
                         <h5 class="modal-title" id="editProfileModalLabel">Chỉnh sửa trang cá nhân</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" style="font-weight: bold;text-align: center;">
                         <form id="editProfileForm" action="/MVC/Process/profile_process.php" method="POST" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="profileImage" class="form-label">Chỉnh sửa ảnh đại diện</label>
